@@ -1,0 +1,67 @@
+html {
+    background-color: #96adcc;
+    color: #ffffff;
+    font-family:Courier, monospace;
+    padding: 10px;
+    font-size: 1.1em;
+}
+/* Section que contém todo o conteudo: */
+#main_content{
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+section>section {
+    /* min-width: 40%; */
+    color: #363636;
+    padding:10px;
+    margin: 10px;
+    background-color: #cacac9;
+    border-style: double;
+    border-width: 8px;
+    border-color: white;
+    box-shadow: 8px 8px 3px #0000008b;
+}
+
+section>div, h4 {
+    margin: 17px;
+    display: flex;
+    flex-direction:column;
+}
+
+input, select, button {
+    width:7em;
+    background-color: rgb(224, 225, 222);
+    border-radius: 3px;
+    font-size:0.8em;
+}
+
+#calcular_div {
+    margin-top: 30px;
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: row;
+    justify-content: space-around;
+}
+
+.warn {
+    color:red;
+    font-size: 0.7em;
+}
+
+.result {
+    margin-top: 0.5em;
+}
+
+.input_container {
+    display: flex;
+    flex-wrap: wrap;
+    /* flex-direction:column; */
+    align-items: center;
+}
+
+.tip {
+    color: #7a7a7a;
+    font-size: 0.9em;
+}

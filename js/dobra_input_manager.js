@@ -5,10 +5,11 @@ function convert_comma_input(text_input) {
 
 function check_input(text_input) {
     test_in = convert_comma_input(text_input);
-    validPattern = /^[0-9.,]+$/;
-    if (validPattern.test(test_in)) {
-        return true;
-    }
+    validPattern = /^[0-9.]+$/;
+    var dots = test_in.match(/\./g);
+    if (dots && dots.length > 1) {return false;}
+    if (test_in == '.') {return false;}
+    if (validPattern.test(test_in)) {return true;}
     return false;
 }
 
@@ -23,8 +24,14 @@ function check_if_integer(text_input) {
     return false;
 }
 
+espessuraIn.addEventListener('input', (event) => {
+    reset_output();
+    return;
+});
+
 // Criando 'n' inputs quando a quantidade de lados é 'n', e avisando quando input é inválida:
 qtdLadosIn.addEventListener('input', (event) => {
+    reset_output();
     if (!check_if_integer(event.target.value)) {
         document.getElementById('lados_warning').innerHTML = '&nbsp;Valor inválido';
         if (event.target.value == '') {
@@ -60,10 +67,35 @@ qtdLadosIn.addEventListener('input', (event) => {
     }
 });
 
+dropDown.addEventListener('change', (event) => {
+    reset_output();
+    return;
+});
+
+div_lados.addEventListener('input', function(event) {
+    reset_output();
+    return;
+});
+
+raioIn.addEventListener('input', (event) => {
+    reset_output();
+    return;
+});
+
+fatorKIn.addEventListener('input', (event) => {
+    reset_output();
+    return;
+});
+
+comprimentoIn.addEventListener('input', (event) => {
+    pesoOut.innerHTML = '';
+    return;
+});
+
 botaoCalc.addEventListener('click', (event) => {
     reset_output();
     outWarn.innerHTML = 'Dados Inválidos';
-    if (!check_input(espessuraIn.value)) {return;}
+    if (!check_input(espessuraIn.value)) {outWarn.innerHTML = 'Dados Inválidos';return;}
     if (qtd_lados == 0) {return;}
     if (dropDown.value == 'blank') {return;}
     if (!check_input(raioIn.value)) {return;}
@@ -72,6 +104,8 @@ botaoCalc.addEventListener('click', (event) => {
             return;
         }
     }
+    if (!check_input(fatorKIn.value) && fatorKIn.value != '') {return;}
+    if (!check_input(comprimentoIn.value) && comprimentoIn.value != '') {return;}
 
     var espessura = parseFloat(convert_comma_input(espessuraIn.value));
     var raio = parseFloat(convert_comma_input(raioIn.value));
@@ -85,13 +119,13 @@ botaoCalc.addEventListener('click', (event) => {
     internas = soma_internas(espessura, ladosList, dropDown.value);
     fkOut.innerHTML = '&bull;Fator-K utilizado: ' + fk_recomendado;
 
-    if (check_input(fatorKIn.value) && fatorKIn.value != '') {
+    if (check_input(fatorKIn.value)) {
         var fK = parseFloat(convert_comma_input(fatorKIn.value));
         desenv = desenvolvimento(espessura, ladosList, dropDown.value, raio, fK);
         fkOut.innerHTML = '&bull;Fator-K recomendado: ' + fk_recomendado;
     }
 
-    if (check_input(comprimentoIn.value) && comprimentoIn.value != '') {
+    if (check_input(comprimentoIn.value)) {
         var compr = parseFloat(convert_comma_input(comprimentoIn.value));
         peso = espessura * 7.9 * desenv * compr / 1e6;
         pesoOut.innerHTML = '&bull;Peso: ' + peso.toFixed(2) + ' kg'
@@ -115,4 +149,10 @@ botaoReset.addEventListener('click', (event) => {
 
     reset_output();
     return;
+});
+
+document.addEventListener('keydown', function(event) {
+    if (event.key === 'Enter') {
+        botaoCalc.click();
+    }
 });

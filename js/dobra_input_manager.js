@@ -130,8 +130,9 @@ botaoCalc.addEventListener('click', (event) => {
         peso = espessura * 7.9 * desenv * compr / 1e6;
         pesoOut.innerHTML = '&bull;Peso: ' + peso.toFixed(2) + ' kg'
     }
-
     outWarn.innerHTML = '';
+    calc_min_side(espessura, ladosList, dropDown.value);
+    // colisao(espessura, ladosList, dropDown.value); // EM CONSTRUCAO
     desenvOut.innerHTML = '&bull;Desenv. teórico: ' + desenv.toFixed(1) + ' mm';
     somaOut.innerHTML = '&bull;Soma medidas internas: ' + internas.toFixed(1) + ' mm';
    

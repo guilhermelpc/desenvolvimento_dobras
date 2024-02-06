@@ -1,6 +1,3 @@
-//Memória dos dois últimos campos modificados (esp, dex, din):
-var anchors = ['', '']; 
-
 function convert_comma_input(text_input) {
     input = text_input.replace(/,/g,'.');
     return input;

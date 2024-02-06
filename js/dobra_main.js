@@ -8,7 +8,8 @@ var fatorKIn = document.getElementById('fator_k');
 var comprimentoIn = document.getElementById('comprimento');
 const botaoCalc = document.getElementById('calcular');
 const botaoReset = document.getElementById('reset'); 
-var outWarn = document.getElementById('output_warn');
+var outWarn = document.getElementById('output_warn1');
+var outWarnB = document.getElementById('output_warn2');
 var output = document.getElementById('output_div');
 var desenvOut = document.getElementById('desenv_teorico');
 var somaOut = document.getElementById('soma_internas');
@@ -41,9 +42,43 @@ function fator_k_recomendado(ri, esp) {
 
 function reset_output() {
     outWarn.innerHTML = '';
+    outWarnB.innerHTML = '';
     desenvOut.innerHTML = '';
     somaOut.innerHTML = '';
     pesoOut.innerHTML = ''
     fkOut.innerHTML = ''
     return;
 }
+
+function calc_min_side(esp, lados, tipo) {
+    if (tipo == 'internas') {
+        for (var i=0; i<lados.length; i++) {lados[i] = lados[i] + esp * 2;}
+        lados[0] = lados[0] - esp;
+        lados[lados.length - 1] = lados[lados.length - 1] - esp;
+    }
+    for (var i=0; i<lados.length; i++) {
+        if (lados[i] <= esp * 6) {
+            outWarn.innerHTML = 'ATENÇÃO: LADO < 6,15 x Esp.';
+            return;
+        }
+    }
+    return;
+}
+
+//em construcao:
+// function colisao(esp, lados, tipo) {
+//     if (lados.length < 3) {return;}
+//     internas = [...lados];
+//     if (tipo == 'externas') {
+//         for (var i=0; i<lados.length; i++) {internas[i] = lados[i] - esp * 2;}
+//         internas[0] = internas[0] + esp;
+//         internas[internas.length - 1] = internas[internas.length - 1] + esp;
+//     }
+//     if (lados.length == 3) {
+//         maiorAba = lados[0]
+//         if (lados[2] > lados[0]) {maiorAba = lados[2];}
+
+//         return;
+//     }
+//     return;
+// }

@@ -65,6 +65,9 @@ input, select, button {
 
 .warn {
     color:red;
+}
+
+#lados_warning {
     font-size: 0.7em;
 }
 

@@ -7,6 +7,7 @@ const botaoReset = document.getElementById('reset');
 const outWarn = document.getElementById('output_warn');
 const desenvOut = document.getElementById('desenv_teorico');
 const pesoOut = document.getElementById('peso');
+var anchors = ['', '']; //Memória dos dois últimos campos modificados (esp, dex, din):
 
 function reset_output() {
     outWarn.innerHTML = '';

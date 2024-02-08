@@ -1,3 +1,5 @@
+anguloIn.value = '360';
+
 function convert_comma_input(text_input) {
     input = text_input.replace(/,/g,'.');
     return input;
@@ -124,31 +126,37 @@ diamIntIn.addEventListener('input', (event) => {
     return;
 });
 
-comprimentoIn.addEventListener('input', function() {
+comprimentoIn.addEventListener('input', () => {
     pesoOut.innerHTML = '';
 });
 
-botaoCalc.addEventListener('click', (event) => {
+anguloIn.addEventListener('input', () => {
+    reset_output();
+});
+
+botaoCalc.addEventListener('click', () => {
     reset_output();
     outWarn.innerHTML = 'Dados Inválidos';
     if (!check_input(espessuraIn.value)) {return;}
     if (!check_input(diamExtIn.value)) {return;}
     if (!check_input(diamIntIn.value)) {return;}
+    if (!check_input(anguloIn.value)) {return;}
     if (!check_input(comprimentoIn.value) && comprimentoIn.value != '') {return;}
     desenvolvimento();
     return;
 });
 
-botaoReset.addEventListener('click', (event) => {
+botaoReset.addEventListener('click', () => {
     espessuraIn.value = '';
     diamExtIn.value = '';
     diamIntIn.value = '';
     comprimentoIn.value = '';
+    anguloIn.value = '360'
     reset_output();
     return;
 });
 
-document.addEventListener('keydown', function(event) {
+document.addEventListener('keydown', (event) => {
     if (event.key === 'Enter') {
         botaoCalc.click();
     }

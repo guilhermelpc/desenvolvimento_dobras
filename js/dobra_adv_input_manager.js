@@ -57,7 +57,7 @@ qtdLadosIn.addEventListener('input', (event) => {
         div_lados.appendChild(newDiv);
 
         var newLabel = document.createElement('label');
-        newLabel.innerHTML = 'Lado' + i + ' (mm):';
+        newLabel.innerHTML = 'L' + i + ' (mm):';
         newDiv.appendChild(newLabel);
 
         var newInput = document.createElement('input');

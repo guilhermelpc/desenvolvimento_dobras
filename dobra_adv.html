@@ -1,0 +1,111 @@
+
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Calculadora de Dobras - Avançado</title>
+        <link rel="stylesheet" href="css/adv_classic.css">
+        <link rel="icon" type="image/x-icon" href="images/favicon.ico">
+    </head>
+    <body>
+        <nav>
+            <ul>
+                <li><a href="index.html" class="current_page">Dobra</a></li>
+                <li><a href="calandragem.html">Calandragem</a></li>
+            </ul>
+        </nav>
+        <header class="title">
+            <h2>Calculadora de Dobras - Avançado</h2>
+        </header>
+        <section id="main_content">
+            <section id="inputs">
+                <h4>Dados iniciais</h4>
+                <div class="inputs_gerais">
+                    <div class="inputs_topo">
+                        <label for="espessura">Espessura (mm):</label>
+                        <div class="input_aviso_container" id="espessura_aviso_container">
+                            <input type="text" name="espessura" id="espessura">
+                            <!-- <div class="warn">&nbsp;Aviso</div> -->
+                        </div>
+                    </div>
+                    <div class="inputs_topo">
+                        <label for="qtd_lados">Qtd. de lados:</label>
+                        <div class="input_aviso_container" id="qtd_lados_aviso_container">
+                            <input type="text" name="qtd_lados" id="qtd_lados">
+                            <div class="warn" id="lados_warning"></div>
+                        </div>
+                    </div>
+                    <div class="inputs_topo">
+                        <label for="dropdown">Tipo de medidas:</label>
+                        <select id="dropdown">
+                            <option value="blank"></option>
+                            <option value="internas">Internas</option>
+                            <option value="externas">Externas</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div id="container_lados">
+                    <div class="L-A-block">
+                        <div class="L-A">
+                            <label for="lado1">L1 (mm):</label>
+                            <input type="text" name="lado1" id="lado1">
+                        </div>
+                        <div class="L-A">
+                            <label for="angulo1">A1/2 °:</label>
+                            <input type="text" name="angulo1" id="angulo1" class="aInput">
+                        </div>
+                    </div>
+                    <div class="L-A-block">
+                        <div class="L-A">
+                            <label for="lado2">L2 (mm):</label>
+                            <input type="text" name="lado2" id="lado2">
+                        </div>
+                        <div class="L-A">
+                        </div>
+                    </div>
+                </div>
+                <div class="inputs_gerais">
+                    <div class="inputs_topo">
+                        <label for="raio">Raio int. (mm):</label>
+                        <input type="text" name="raio" id="raio">
+                    </div>
+                    <div class="inputs_topo">
+                        <label for="fator_k">Fator K:</label>
+                        <div class="input_container">
+                            <input type="text" name="fator_k" id="fator_k">
+                            <div class="tip">(opcional)</div>
+                        </div>
+                    </div>
+                    <div class="inputs_topo">
+                        <label for="comprimento">Comprimento (mm):</label>
+                        <div class="input_container">
+                            <input type="text" name="comprimento" id="comprimento">
+                            <div class="tip">(opcional)</div>
+                        </div>
+                    </div>
+
+                </div>
+                
+                <div id="calcular_div">
+                    <button id="calcular">Calcular</button>
+                    <button id="reset">Reset</button>
+                </div>
+            </section>
+            <section id="outputs">
+                <h4>Resultados</h4>
+                <div class="warn" id="output_warn1"></div>
+                <div class="warn" id="output_warn2"></div>
+                <div id="output_div">
+                    <div id="desenv_teorico" class="result"></div>
+                    <div id="soma_internas" class="result"></div>
+                    <div id="peso" class="result"></div>
+                    <div id="fk_recomendado" class="result"></div>
+                </div>
+            </section>
+        </section>
+        <script src="js/dobra_adv_main.js"></script>
+        <script src="js/dobra_adv_input_manager.js"></script>
+    </body>
+</html>

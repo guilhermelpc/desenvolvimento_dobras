@@ -60,7 +60,7 @@ function calc_min_side(esp, ladosLista, tipo) {
         lados[lados.length - 1] = lados[lados.length - 1] - esp;
     }
     for (var i=0; i<lados.length; i++) {
-        if (lados[i] <= esp * 6.15) {
+        if (lados[i] <= esp * 6) {
             outWarn.innerHTML = 'AVISO: LADO < 6,15 x Esp.';
             return;
         }
@@ -84,8 +84,8 @@ function colisao(esp, lados, tipo) {
         internas[len - 1] = internas[len - 1] + esp;
     }   
     if (len == 3) {
-        menorAba = Math.min(internas[0], internas[len -1]);
-        if (menorAba > internas[1] - 20) {
+        maiorAba = Math.max(internas[0], internas[len -1]);
+        if (maiorAba > internas[1] - 20) {
             outWarnB.innerHTML = 'AVISO: Possível colisão com ferramenta';
         }
         return;

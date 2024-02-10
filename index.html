@@ -21,27 +21,29 @@
         <section id="main_content">
             <section id="inputs">
                 <h4>Dados iniciais</h4>
-                <div>
-                    <label for="espessura">Espessura (mm):</label>
-                    <div class="input_aviso_container" id="espessura_aviso_container">
-                        <input type="text" name="espessura" id="espessura">
-                        <!-- <div class="warn">&nbsp;Aviso</div> -->
+                <div class="inputs_gerais">
+                    <div class="inputs_topo">
+                        <label for="espessura">Espessura (mm):</label>
+                        <div class="input_aviso_container" id="espessura_aviso_container">
+                            <input type="text" name="espessura" id="espessura">
+                            <!-- <div class="warn">&nbsp;Aviso</div> -->
+                        </div>
                     </div>
-                </div>
-                <div>
-                    <label for="qtd_lados">Quantidade de lados:</label>
-                    <div class="input_aviso_container" id="qtd_lados_aviso_container">
-                        <input type="text" name="qtd_lados" id="qtd_lados">
-                        <div class="warn" id="lados_warning"></div>
+                    <div class="inputs_topo">
+                        <label for="qtd_lados">Qtd. de lados:</label>
+                        <div class="input_aviso_container" id="qtd_lados_aviso_container">
+                            <input type="text" name="qtd_lados" id="qtd_lados">
+                            <div class="warn" id="lados_warning"></div>
+                        </div>
                     </div>
-                </div>
-                <div id="tipo_medidas">
-                    <label for="dropdown">Tipo de medidas:</label>
-                    <select id="dropdown">
-                        <option value="blank"></option>
-                        <option value="internas">Internas</option>
-                        <option value="externas">Externas</option>
-                    </select>
+                    <div class="inputs_topo">
+                        <label for="dropdown">Tipo de medidas:</label>
+                        <select id="dropdown">
+                            <option value="blank"></option>
+                            <option value="internas">Internas</option>
+                            <option value="externas">Externas</option>
+                        </select>
+                    </div>
                 </div>
                 <div id="container_lados">
                     <!-- <div>
@@ -53,22 +55,24 @@
                         <input type="text" name="lado2" id="lado2">
                     </div> -->
                 </div>
-                <div>
-                    <label for="raio">Raio interno (mm):</label>
-                    <input type="text" name="raio" id="raio">
-                </div>
-                <div>
-                    <label for="fator_k">Fator K:</label>
-                    <div class="input_container">
-                        <input type="text" name="fator_k" id="fator_k">
-                        <div class="tip">(opcional)</div>
+                <div class="inputs_gerais">
+                    <div class="inputs_topo">
+                        <label for="raio">Raio int. (mm):</label>
+                        <input type="text" name="raio" id="raio">
                     </div>
-                </div>
-                <div>
-                    <label for="comprimento">Comprimento (mm):</label>
-                    <div class="input_container">
-                        <input type="text" name="comprimento" id="comprimento">
-                        <div class="tip">(opcional)</div>
+                    <div class="inputs_topo">
+                        <label for="comprimento">Comprimento (mm):</label>
+                        <div class="input_container">
+                            <input type="text" name="comprimento" id="comprimento">
+                            <div class="tip">(opcional)</div>
+                        </div>
+                    </div>
+                    <div class="inputs_topo">
+                        <label for="fator_k">Fator K:</label>
+                        <div class="input_container">
+                            <input type="text" name="fator_k" id="fator_k">
+                            <div class="tip">(opcional)</div>
+                        </div>
                     </div>
                 </div>
                 <div id="calcular_div">

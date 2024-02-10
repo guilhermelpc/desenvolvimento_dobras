@@ -1,5 +1,5 @@
 html {
-    padding: 0;
+    margin: 0;
     padding: 0;
     border: 0;
     background-color: #96adcc;
@@ -16,7 +16,6 @@ body {
     margin: 0;
     padding: 0;
     border: 0;
-    /* justify-content: center; */
 }
 
 .title {
@@ -24,7 +23,7 @@ body {
     flex-wrap: wrap;
     justify-content: center;
 }
-/* Section que contém todo o conteudo: */
+
 #main_content{
     display: flex;
     flex-wrap: wrap;
@@ -32,11 +31,10 @@ body {
 }
 
 section>section {
-    color: #363636;
+    color: #4f4f4f;
     padding:10px;
     margin: 10px;
     background-color: #d6d6d6;
-    /* border-style: double; */
     border-width: 8px;
     border-color: white;
     box-shadow: 8px 8px 3px #0000008b;
@@ -44,15 +42,75 @@ section>section {
 }
 
 section>div, h4 {
-    margin: 17px;
+    margin: 0.2em;
     display: flex;
+    flex-wrap: wrap;
     flex-direction:column;
 }
 
+h4 {
+    margin: 0.5em;
+    padding: 0;
+    border: 0;
+}
+
+.inputs_gerais {
+    border-style:solid;
+    border-width: 0.15em;
+    border-color: #c4c4c4;
+    border-radius: 0.3em;
+    padding: 0.3em;
+}
+
+.inputs_topo {
+    margin: 0.1em;
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction:column;
+}
+
+.input_container {
+    display: flex;
+    flex-wrap: wrap;
+    /* flex-direction:column; */
+    align-items:baseline;
+}
+
+.input_container>input {
+    width: 5em;
+}
+
+#lados_warning {
+    font-size: 0.7em;
+}
+
+#container_lados {
+    width: 11.5em;
+    margin: 0.3em;
+    margin-left: 0.5em;
+}
+
+.L-A-block {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+}
+
+.L-A {
+    margin: 0.1em;
+    display: flex;
+    flex-direction: column;
+}
+
+.a {
+    width: 4em;
+}
+
 input, select, button {
-    width:7em;
+    width:6em;
     background-color: rgb(224, 225, 222);
     border-radius: 3px;
+    border-color: #d1d1d1;
     font-size:0.8em;
 }
 
@@ -68,19 +126,8 @@ input, select, button {
     color:red;
 }
 
-#lados_warning {
-    font-size: 0.7em;
-}
-
 .result {
     margin-top: 0.5em;
-}
-
-.input_container {
-    display: flex;
-    flex-wrap: wrap;
-    /* flex-direction:column; */
-    align-items: center;
 }
 
 .tip {
@@ -94,7 +141,6 @@ nav ul {
     border: 0;
     display: flex;
     align-items: center;
-    /* justify-content:space-evenly; */
     list-style-type: none;
     height: 2.2em;
 }
@@ -131,4 +177,42 @@ nav a:visited {
     border-style: inset;
 }
 
+#output_div {
+    display: block;
+    flex-wrap: wrap;
+    flex-direction: row;
+    padding: 0.3em;
+}
 
+/* @media screen and (min-width: 600px) {
+    section>div, h4 {
+        justify-content: space-between;
+        flex-direction:row;
+    }
+    .inputs_topo {
+        background-color: #d1d1d1;
+        margin-left: 0.5em;
+        margin-right: 0.5em;
+        display: flex;
+        flex-wrap: wrap;
+        flex-direction:column;
+        align-items:baseline;
+        padding: 0.1em;
+        border-radius: 0.3em;
+        flex-grow: 1;
+    }
+    #container_lados {
+        width: 11.5em;
+        margin: 0.5em;
+        margin-left: 1em;
+    }
+    #calcular_div {
+        margin-top: 15px;
+        display: block; 
+    }
+    #L-A-block {
+        background-color: #d1d1d1;
+        margin-left: 0.2em;
+        margin-right: 0.5em;
+    }
+} */

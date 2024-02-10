@@ -113,7 +113,6 @@ botaoCalc.addEventListener('click', (event) => {
     for (var i = 1; i <= qtd_lados; i++) {
         ladosList.push(parseFloat(convert_comma_input(document.getElementById('lado' + i).value)));
     }
-    console.log(ladosList);
 
     fk_recomendado = fator_k_recomendado(raio, espessura).toFixed(3);
     desenv = desenvolvimento(espessura, ladosList, dropDown.value, raio, fk_recomendado)

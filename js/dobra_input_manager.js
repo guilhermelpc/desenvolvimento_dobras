@@ -89,6 +89,7 @@ fatorKIn.addEventListener('input', (event) => {
 
 comprimentoIn.addEventListener('input', (event) => {
     pesoOut.innerHTML = '';
+    ton.innerHTML = '';
     return;
 });
 
@@ -109,15 +110,17 @@ botaoCalc.addEventListener('click', (event) => {
 
     var espessura = parseFloat(convert_comma_input(espessuraIn.value));
     var raio = parseFloat(convert_comma_input(raioIn.value));
-    var ladosList = []
+    var ladosList = [];
     for (var i = 1; i <= qtd_lados; i++) {
         ladosList.push(parseFloat(convert_comma_input(document.getElementById('lado' + i).value)));
     }
 
     fk_recomendado = fator_k_recomendado(raio, espessura).toFixed(3);
-    desenv = desenvolvimento(espessura, ladosList, dropDown.value, raio, fk_recomendado)
+    desenv = desenvolvimento(espessura, ladosList, dropDown.value, raio, fk_recomendado);
     internas_sum = soma_internas(espessura, ladosList, dropDown.value);
     fkOut.innerHTML = '&bull;Fator-K utilizado: ' + fk_recomendado;
+    
+    ton_metro.innerHTML = '&bull;Força: ' + forceMeter(espessura, 25, espessura*6*1.15).toFixed(2) + ' ton/m (para A36)' //limite esc. 25 kg/mm2 para A36
 
     if (check_input(fatorKIn.value)) {
         var fK = parseFloat(convert_comma_input(fatorKIn.value));
@@ -128,7 +131,8 @@ botaoCalc.addEventListener('click', (event) => {
     if (check_input(comprimentoIn.value)) {
         var compr = parseFloat(convert_comma_input(comprimentoIn.value));
         peso = espessura * 7.9 * desenv * compr / 1e6;
-        pesoOut.innerHTML = '&bull;Peso: ' + peso.toFixed(2) + ' kg'
+        pesoOut.innerHTML = '&bull;Peso: ' + peso.toFixed(2) + ' kg';
+        ton.innerHTML = '&bull;Força: ' + (compr*forceMeter(espessura, 25, espessura*6*1.15)/1000).toFixed(2) + ' ton (para A36)' //limite esc. 25 kg/mm2 para A36
     }
     outWarn.innerHTML = '';
     calc_min_side(espessura, ladosList, dropDown.value);
@@ -155,4 +159,5 @@ document.addEventListener('keydown', function(event) {
     if (event.key === 'Enter') {
         botaoCalc.click();
     }
+    return;
 });

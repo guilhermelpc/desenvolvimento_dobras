@@ -15,6 +15,8 @@ var desenvOut = document.getElementById('desenv_teorico');
 var somaOut = document.getElementById('soma_internas');
 var pesoOut = document.getElementById('peso');
 var fkOut = document.getElementById('fk_recomendado');
+var ton_metro = document.getElementById('ton_metro');
+var ton = document.getElementById('ton');
 
 function desenvolvimento(esp, lados, tipo, raio, fator) {
     soma = lados.reduce((acc, cur) => {return acc + cur}, 0);
@@ -45,8 +47,10 @@ function reset_output() {
     outWarnB.innerHTML = '';
     desenvOut.innerHTML = '';
     somaOut.innerHTML = '';
-    pesoOut.innerHTML = ''
-    fkOut.innerHTML = ''
+    pesoOut.innerHTML = '';
+    fkOut.innerHTML = '';
+    ton_metro.innerHTML = '';
+    ton.innerHTML = '';
     return;
 }
 
@@ -90,6 +94,10 @@ function colisao(esp, lados, tipo) {
         }
         return;
     }
-
     return;
+}
+
+//em contrucao:
+function forceMeter(t, r, v) {
+    return ((1 + 4 * t / v) * (t ** 2) * r) / v; // [ton/m]
 }

@@ -37,6 +37,10 @@
                         </div>
                     </div>
                     <div class="inputs_topo">
+                        <label for="raio">Raio int. (mm):</label>
+                        <input type="text" name="raio" id="raio">
+                    </div>
+                    <div class="inputs_topo">
                         <label for="dropdown">Tipo de medidas:</label>
                         <select id="dropdown">
                             <option value="blank"></option>
@@ -56,14 +60,25 @@
                     </div> -->
                 </div>
                 <div class="inputs_gerais">
-                    <div class="inputs_topo">
-                        <label for="raio">Raio int. (mm):</label>
-                        <input type="text" name="raio" id="raio">
-                    </div>
+                    
                     <div class="inputs_topo">
                         <label for="comprimento">Comprimento (mm):</label>
                         <div class="input_container">
                             <input type="text" name="comprimento" id="comprimento">
+                            <div class="tip">(opcional)</div>
+                        </div>
+                    </div>
+                    <div class="inputs_topo">
+                        <label for="limEsc">Lim. Esc. (MPa):</label>
+                        <div class="input_container">
+                            <input type="text" name="limEsc" id="limEsc">
+                            <div class="tip">(opcional)</div>
+                        </div>
+                    </div>
+                    <div class="inputs_topo">
+                        <label for="v">V (mm):</label>
+                        <div class="input_container">
+                            <input type="text" name="v" id="v">
                             <div class="tip">(opcional)</div>
                         </div>
                     </div>
@@ -91,6 +106,7 @@
                     <div id="fk_recomendado" class="result"></div>
                     <div id="ton_metro" class="result"></div>
                     <div id="ton" class="result"></div>
+                    <div id="vMin" class="result"></div>
                 </div>
             </section>
         </section>

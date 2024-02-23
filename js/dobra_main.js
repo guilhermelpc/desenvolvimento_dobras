@@ -6,6 +6,8 @@ var div_lados = document.getElementById('container_lados');
 var raioIn = document.getElementById('raio');
 var fatorKIn = document.getElementById('fator_k');
 var comprimentoIn = document.getElementById('comprimento');
+var limEscIn = document.getElementById('limEsc');
+const vIn = document.getElementById('v')
 const botaoCalc = document.getElementById('calcular');
 const botaoReset = document.getElementById('reset'); 
 var outWarn = document.getElementById('output_warn1');
@@ -17,6 +19,7 @@ var pesoOut = document.getElementById('peso');
 var fkOut = document.getElementById('fk_recomendado');
 var ton_metro = document.getElementById('ton_metro');
 var ton = document.getElementById('ton');
+var vMin = document.getElementById('vMin');
 
 function desenvolvimento(esp, lados, tipo, raio, fator) {
     soma = lados.reduce((acc, cur) => {return acc + cur}, 0);
@@ -51,6 +54,7 @@ function reset_output() {
     fkOut.innerHTML = '';
     ton_metro.innerHTML = '';
     ton.innerHTML = '';
+    vMin.innerHTML = '';
     return;
 }
 

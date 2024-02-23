@@ -93,6 +93,18 @@ comprimentoIn.addEventListener('input', (event) => {
     return;
 });
 
+limEscIn.addEventListener('input', (event) => {
+    ton.innerHTML = '';
+    ton_metro.innerHTML = '';
+    return;
+})
+
+vIn.addEventListener('input', (event) => {
+    ton.innerHTML = '';
+    ton_metro.innerHTML = '';
+    return;
+})
+
 botaoCalc.addEventListener('click', (event) => {
     reset_output();
     outWarn.innerHTML = 'Dados Inválidos';
@@ -107,6 +119,8 @@ botaoCalc.addEventListener('click', (event) => {
     }
     if (!check_input(fatorKIn.value) && fatorKIn.value != '') {return;}
     if (!check_input(comprimentoIn.value) && comprimentoIn.value != '') {return;}
+    if (!check_input(limEscIn.value) && limEscIn.value != '') {return;}
+    if (!check_input(vIn.value) && vIn.value != '') {return;}
 
     var espessura = parseFloat(convert_comma_input(espessuraIn.value));
     var raio = parseFloat(convert_comma_input(raioIn.value));
@@ -116,23 +130,31 @@ botaoCalc.addEventListener('click', (event) => {
     }
 
     fk_recomendado = fator_k_recomendado(raio, espessura).toFixed(3);
+    v_recomendado = parseFloat(convert_comma_input(espessuraIn.value)) * 6 * 1.15;
     desenv = desenvolvimento(espessura, ladosList, dropDown.value, raio, fk_recomendado);
     internas_sum = soma_internas(espessura, ladosList, dropDown.value);
     fkOut.innerHTML = '&bull;Fator-K utilizado: ' + fk_recomendado;
+    vMin.innerHTML = '&bull;V Mínimo recomendado: ' + v_recomendado.toFixed(2) + ' mm';
     
-    ton_metro.innerHTML = '&bull;Força: ' + forceMeter(espessura, 25, espessura*6*1.15).toFixed(2) + ' ton/m (para A36)' //limite esc. 25 kg/mm2 para A36
-
     if (check_input(fatorKIn.value)) {
         var fK = parseFloat(convert_comma_input(fatorKIn.value));
         desenv = desenvolvimento(espessura, ladosList, dropDown.value, raio, fK);
         fkOut.innerHTML = '&bull;Fator-K recomendado: ' + fk_recomendado;
     }
-
     if (check_input(comprimentoIn.value)) {
         var compr = parseFloat(convert_comma_input(comprimentoIn.value));
         peso = espessura * 7.9 * desenv * compr / 1e6;
         pesoOut.innerHTML = '&bull;Peso: ' + peso.toFixed(2) + ' kg';
-        ton.innerHTML = '&bull;Força: ' + (compr*forceMeter(espessura, 25, espessura*6*1.15)/1000).toFixed(2) + ' ton (para A36)' //limite esc. 25 kg/mm2 para A36
+    }
+    if (check_input(limEscIn.value)) {
+        var v = espessura*6*1.15
+        if (check_input(vIn.value)) {v = parseFloat(convert_comma_input(vIn.value))}
+        var lim = parseFloat(convert_comma_input(limEscIn.value))
+        ton_metro.innerHTML = '&bull;Força: ' + forceMeter(espessura, lim/10, v).toFixed(2) + ' ton/m' //limite esc. kg/mm2 para A36
+        if (check_input(comprimentoIn.value)) {
+            var compr = parseFloat(convert_comma_input(comprimentoIn.value));
+            ton.innerHTML = '&bull;Força: ' + (compr*forceMeter(espessura, lim/10, v)/1000).toFixed(2) + ' ton' //limite esc. kg/mm2
+        }
     }
     outWarn.innerHTML = '';
     calc_min_side(espessura, ladosList, dropDown.value);
@@ -150,6 +172,8 @@ botaoReset.addEventListener('click', (event) => {
     raioIn.value = '';
     fatorKIn.value = '';
     comprimentoIn.value = '';
+    limEscIn.value = '';
+    vIn.value = '';
 
     reset_output();
     return;

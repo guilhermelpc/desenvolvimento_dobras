@@ -8,28 +8,26 @@ const botaoReset = document.getElementById('reset');
 const outWarn = document.getElementById('output_warn');
 const desenvOut = document.getElementById('desenv_teorico');
 const pesoOut = document.getElementById('peso');
+const svgDiv = document.getElementById("drawing");
 var anchors = ['', '']; 
 
 function reset_output() {
     outWarn.innerHTML = '';
     desenvOut.innerHTML = '';
     pesoOut.innerHTML = '';
-    var anchors = ['', ''];
+    svgDiv.innerHTML = "";
     return;
 }
 
-function desenvolvimento() {
+function desenvolvimento(esp, dext, angulo) {
     outWarn.innerHTML = '';
-    esp = parseFloat(convert_comma_input(espessuraIn.value));
-    dext = parseFloat(convert_comma_input(diamExtIn.value));
-    angulo = parseFloat(convert_comma_input(anguloIn.value));
-    diamIntIn.value = ((dext - 2 * esp) * angulo / 360).toFixed(2);
-    desenv = (dext - esp) * Math.PI * angulo / 360;
+
+    diamIntIn.value = ((dext - 2 * esp)).toFixed(2);
+    let desenv = (dext - esp) * Math.PI * angulo / 360;
     desenvOut.innerHTML = 'Desenvolvimento: ' + desenv.toFixed(2) + ' mm';
     if (!check_input(comprimentoIn.value)) {return;}
-    compr = parseFloat(convert_comma_input(comprimentoIn.value));
-    peso = esp * 7.9 * desenv * compr / 1e6;
+    let compr = parseFloat(convert_comma_input(comprimentoIn.value));
+    let peso = esp * 7.9 * desenv * compr / 1e6;
     pesoOut.innerHTML = 'Peso ' + peso.toFixed(2) + ' kg';
     return;
 }
-

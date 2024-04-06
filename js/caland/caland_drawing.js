@@ -1,9 +1,15 @@
 function draw(esp, dext, angulo) {
+    const svgWidth = 300;
+    const svgHeight = 430;
+    const cX = 150;
+    const cY = 173;
+    const rExtPixels = 95; // Define a escala do desenho
+    const rIntPixels = 95 * ((dext/2 - esp)/(dext/2));
+    const arrowSize = 0.15 * rExtPixels;
+
     svgDiv.innerHTML = "";
     // SVG Element:
     const svgElement = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-    const svgWidth = 300;
-    const svgHeight = 430;
     svgElement.setAttribute("width", svgWidth);
     svgElement.setAttribute("height", svgHeight);
 
@@ -22,9 +28,6 @@ function draw(esp, dext, angulo) {
     textTop.textContent = "Dimensões em milímetros"
     svgElement.appendChild(textTop);
     // Ext. Arc:
-    const rExtPixels = 95; // Define a escala do desenho
-    const cX = 150;
-    const cY = 173;
     let bigger = 1;
     if (angulo < 180) {bigger = 0;}
     let angAbertura = 2 * Math.PI - angulo * Math.PI / 180 + 1e-5;
@@ -39,7 +42,6 @@ function draw(esp, dext, angulo) {
     arcExt.setAttribute("stroke-width", 1);
     svgElement.appendChild(arcExt);
     // Int. Arc:
-    let rIntPixels = 95*((dext/2-esp)/(dext/2));
     let startYIn = cY - rIntPixels * Math.sin(angPonto);
     let startXIn = cX + rIntPixels * Math.cos(angPonto);
     let endXIn = cX - rIntPixels * Math.cos(angPonto);
@@ -53,8 +55,8 @@ function draw(esp, dext, angulo) {
     // Linhas:
     const linesCoord = [
         //x1, y1, x2, y2, color, condition:
-        [cX - 31, cY, cX + 31, cY, "grey", 1], // linha centro horizontal
-        [cX, cY - 31, cX, cY + 31, "grey", 1], // linha centro vertical
+        [cX - 0.32 * rExtPixels, cY, cX + 0.32 * rExtPixels, cY, "grey", 1], // linha centro horizontal
+        [cX, cY - 0.32 * rExtPixels, cX, cY + 0.32 * rExtPixels, "grey", 1], // linha centro vertical
         [startX, startY, startXIn, startYIn, "black", 1], // linha arcos 1
         [endX, startY, endXIn, startYIn, "black", 1], // linha arcos 2
         [(cX - rExtPixels), cY + 8, (cX - rExtPixels), cY + 176.6, "grey", bigger], // cota externa linha esquerda
@@ -76,9 +78,7 @@ function draw(esp, dext, angulo) {
             svgElement.appendChild(lineElement);
         }
     }
-
     // Linhas com flechas:
-    const arrowSize = 15;
     if (angulo >= 180) {
         // Right Arrow:
         const arrowPathRight = `M 0 0 L 0 ${arrowSize/3} L ${arrowSize} ${arrowSize/6} Z`;
@@ -136,18 +136,18 @@ function draw(esp, dext, angulo) {
         const TextDiamExt = document.createElementNS("http://www.w3.org/2000/svg", "text");
         TextDiamExt.setAttribute("y", cY+164.4);
         TextDiamExt.setAttribute("font-size", 16);
-        var TextDiamExtCont = "Ø ext " + dext.toFixed(1);
+        let TextDiamExtCont = "Ø ext " + dext.toFixed(1);
         TextDiamExt.textContent = TextDiamExtCont;
-        var TextDiamExtLen = 127 - 2.5*(TextDiamExtCont.length);
+        let TextDiamExtLen = 127 - 2.5*(TextDiamExtCont.length);
         TextDiamExt.setAttribute("x", TextDiamExtLen);
         svgElement.appendChild(TextDiamExt);
         // Text diâmetro int:
         const TextDiamInt = document.createElementNS("http://www.w3.org/2000/svg", "text");
         TextDiamInt.setAttribute("y", cY+134.8);
         TextDiamInt.setAttribute("font-size", 16);
-        var TextDiamIntCont = "Ø int " + (dext - 2 * esp).toFixed(1);
+        let TextDiamIntCont = "Ø int " + (dext - 2 * esp).toFixed(1);
         TextDiamInt.textContent = TextDiamIntCont;
-        var TextDiamIntLen = 127 - 2.5*(TextDiamIntCont.length);
+        let TextDiamIntLen = 127 - 2.5*(TextDiamIntCont.length);
         TextDiamInt.setAttribute("x", TextDiamIntLen);
         svgElement.appendChild(TextDiamInt);
         // Text espessura
@@ -161,19 +161,16 @@ function draw(esp, dext, angulo) {
     if (angulo < 180) {
         
     }
-
-
     // Text Comprimento:
-    const textComprimento = document.createElementNS("http://www.w3.org/2000/svg", "text");
-    textComprimento.setAttribute("x", svgWidth - 242);
-    textComprimento.setAttribute("y", cY + 231.5);
-    textComprimento.setAttribute("font-size", "16");
     let compr = parseFloat(convert_comma_input(comprimentoIn.value));
     if (!isNaN(compr)){
+        const textComprimento = document.createElementNS("http://www.w3.org/2000/svg", "text");
+        textComprimento.setAttribute("x", svgWidth - 242);
+        textComprimento.setAttribute("y", cY + 201.5);
+        textComprimento.setAttribute("font-size", "16");
         textComprimento.textContent = "Comprimento: " + parseFloat(convert_comma_input(comprimentoIn.value)) + " mm";
+        svgElement.appendChild(textComprimento);
     }
-    svgElement.appendChild(textComprimento);
-
     // SVG append
     svgDiv.appendChild(svgElement);
 
@@ -199,3 +196,7 @@ function draw(esp, dext, angulo) {
     // circleInt.setAttribute("stroke-dasharray", "10, 5");
     // svgElement.appendChild(circleInt);
 }
+
+// function getArrow(size, rotation) {
+
+// }

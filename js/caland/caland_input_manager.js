@@ -137,7 +137,7 @@ diamIntIn.addEventListener('input', (event) => {
 });
 
 comprimentoIn.addEventListener('input', () => {
-    pesoOut.innerHTML = '';
+    reset_output();
 });
 
 anguloIn.addEventListener('input', () => {

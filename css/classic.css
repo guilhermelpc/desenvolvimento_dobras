@@ -185,6 +185,10 @@ nav a:visited {
     padding: 0.3em;
 }
 
+#aviso-sobremetal {
+    color: rgb(172, 58, 38);
+}
+
 /* @media screen and (min-width: 600px) {
     section>div, h4 {
         justify-content: space-between;

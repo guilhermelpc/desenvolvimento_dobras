@@ -15,6 +15,16 @@ function check_input(text_input) {
     return false;
 }
 
+function reset_input(){
+    espessuraIn.value = '';
+    diamExtIn.value = '';
+    diamIntIn.value = '';
+    comprimentoIn.value = '';
+    anguloIn.value = '360';
+    anchors = ['', '']; 
+    return;
+}
+
 espessuraIn.addEventListener('input', (event) => {
     reset_output();
     if (anchors[1] != 'esp') {
@@ -142,16 +152,17 @@ botaoCalc.addEventListener('click', () => {
     if (!check_input(diamIntIn.value)) {return;}
     if (!check_input(anguloIn.value)) {return;}
     if (!check_input(comprimentoIn.value) && comprimentoIn.value != '') {return;}
-    desenvolvimento();
+    let esp = parseFloat(convert_comma_input(espessuraIn.value));
+    let dext = parseFloat(convert_comma_input(diamExtIn.value));
+    let angulo = parseFloat(convert_comma_input(anguloIn.value));
+    if (angulo > 360 || angulo <= 0) {return;}
+    desenvolvimento(esp, dext, angulo);
+    draw(esp, dext, angulo);
     return;
 });
 
 botaoReset.addEventListener('click', () => {
-    espessuraIn.value = '';
-    diamExtIn.value = '';
-    diamIntIn.value = '';
-    comprimentoIn.value = '';
-    anguloIn.value = '360'
+    reset_input();
     reset_output();
     return;
 });
@@ -161,3 +172,4 @@ document.addEventListener('keydown', (event) => {
         botaoCalc.click();
     }
 });
+

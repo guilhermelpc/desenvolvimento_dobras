@@ -20,45 +20,42 @@
         <section id="main_content">
             <section id="inputs">
                 <h4>Dados iniciais</h4>
-                <div class="inputs_gerais">
-                    <div>
+                <div class="inputs_gerais">   
                         <label for="espessura">Espessura (mm):</label>
                         <div class="input_container">
                             <input type="text" name="espessura" id="espessura">
                             <div class="tip"></div>
                         </div>
-                    </div>
-                    <div>
                         <label for="diam_ext">Diâmetro externo (mm):</label>
                         <div class="input_container">
                             <input type="text" name="diam_ext" id="diam_ext">
                             <div class="tip"></div>
                         </div>
-                    </div>
-                    <div>
                         <label for="diam_int">Diâmetro interno (mm):</label>
                         <div class="input_container">
                             <input type="text" name="diam_int" id="diam_int">
                             <div class="tip"></div>
                         </div>
-                    </div>
-
                 </div>
-                
-                <div>
+                <div class="inputs_gerais">
                     <label for="comprimento">Comprimento (mm):</label>
                     <div class="input_container">
                         <input type="text" name="comprimento" id="comprimento">
                         <div class="tip">(opcional)</div>
                     </div>
                 </div>
-                <div>
-                    <label for="angulo">Ângulo (graus):</label>
-                    <div class="input_container">
-                        <input type="text" name="angulo" id="angulo">
-                        <div class="tip"></div>
+                    <div class="inputs_gerais">
+                        <label for="angulo">Ângulo (graus):</label>
+                        <div class="input_container">
+                            <input type="text" name="angulo" id="angulo">
+                            <div class="tip"></div>
+                        </div>
+                        <label for="abertura_ext">Abertura ext. (mm):</label>
+                        <div class="input_container">
+                            <input type="text" name="abertura_ext" id="abertura_ext">
+                            <div class="tip"><button id="inverter">Inverter</button></div>
+                        </div>
                     </div>
-                </div>
                 <div id="calcular_div">
                     <button id="calcular">Calcular</button>
                     <button id="reset">Reset</button>

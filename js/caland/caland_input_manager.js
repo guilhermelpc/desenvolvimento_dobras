@@ -1,12 +1,25 @@
-anguloIn.value = '360';
+const espessuraIn = document.getElementById('espessura');
+const diamExtIn = document.getElementById('diam_ext');
+const diamIntIn = document.getElementById('diam_int');
+const comprimentoIn = document.getElementById('comprimento');
+const anguloIn = document.getElementById('angulo');
+const aberturaExtIn = document.getElementById('abertura_ext');
+const botaoInverter = document.getElementById('inverter');
+const botaoCalc = document.getElementById('calcular');
+const botaoReset = document.getElementById('reset');
+var anchorsGlobal = ['', ''];
+var invertedGlobal = false;
 
-function convert_comma_input(text_input) {
+anguloIn.value = '360';
+aberturaExtIn.value = '0';
+
+function convertCommaInput(text_input) {
     input = text_input.replace(/,/g,'.');
     return input;
 }
 
-function check_input(text_input) {
-    test_in = convert_comma_input(text_input);
+function checkInput(text_input) {
+    test_in = convertCommaInput(text_input);
     validPattern = /^[0-9.]+$/;
     var dots = test_in.match(/\./g);
     if (dots && dots.length > 1) {return false;}
@@ -15,47 +28,63 @@ function check_input(text_input) {
     return false;
 }
 
+function areAllInputsOk() {
+    if (!checkInput(espessuraIn.value)) {return false;}
+    if (!checkInput(diamExtIn.value)) {return false;}
+    if (!checkInput(diamIntIn.value)) {return false;}
+    if (!checkInput(anguloIn.value)) {return false;}
+    if (!checkInput(aberturaExtIn.value)) {return false;}
+    if (!checkInput(comprimentoIn.value) && comprimentoIn.value != '') {return false;}
+    let abertura = parseFloat(convertCommaInput(aberturaExtIn.value));
+    if (abertura > parseFloat(convertCommaInput(diamExtIn.value)) || abertura < 0) {return false;}
+    let angulo = parseFloat(convertCommaInput(anguloIn.value));
+    if (angulo > 360 || angulo <= 0) {return false;}
+    outWarn.innerHTML = '';
+    return true;
+}
+
 function reset_input(){
     espessuraIn.value = '';
     diamExtIn.value = '';
     diamIntIn.value = '';
     comprimentoIn.value = '';
     anguloIn.value = '360';
-    anchors = ['', '']; 
+    aberturaExtIn.value = '0';
+    anchorsGlobal = ['', '']; 
     return;
 }
 
 espessuraIn.addEventListener('input', (event) => {
     reset_output();
-    if (anchors[1] != 'esp') {
-        anchors.shift();
-        anchors.push('esp');
+    if (anchorsGlobal[1] != 'esp') { // if anchorsGlobal = ['any','any_except_esp']
+        anchorsGlobal.shift(); // anchorsGlobal = ['any_except_esp']
+        anchorsGlobal.push('esp'); // anchorsGlobal = ['any_except_esp','esp']
     }
-    if (!check_input(event.target.value) && event.target.value != '') {return;}
-    if (!check_input(diamExtIn.value) && !check_input(diamIntIn.value)) {return;}
-    if (anchors[0] == 'dex' && check_input(diamExtIn.value)) {
+    if (!checkInput(event.target.value) && event.target.value != '') {return;}
+    if (!checkInput(diamExtIn.value) && !checkInput(diamIntIn.value)) {return;}
+    if (anchorsGlobal[0] == 'dex' && checkInput(diamExtIn.value)) { // if anchorsGlobal = ['dex', 'esp'] && dex_input_ok
         if (event.target.value == '') {
             diamIntIn.value = '';
             return;
         }
-        dex = parseFloat(convert_comma_input(diamExtIn.value));
-        esp = parseFloat(convert_comma_input(event.target.value));
+        dex = parseFloat(convertCommaInput(diamExtIn.value));
+        esp = parseFloat(convertCommaInput(event.target.value));
         diamIntIn.value = (dex - 2 * esp).toFixed(2);
     }
-    if (anchors[0] == 'dex' && diamExtIn.value == '') {
+    if (anchorsGlobal[0] == 'dex' && diamExtIn.value == '') { // if anchorsGlobal = ['dex','']
         diamIntIn.value = '';
         return;
     }
-    if (anchors[0] == 'din' && check_input(diamIntIn.value)) {
+    if (anchorsGlobal[0] == 'din' && checkInput(diamIntIn.value)) {
         if (event.target.value == '') {
             diamExtIn.value = '';
             return;
         }
-        din = parseFloat(convert_comma_input(diamIntIn.value));
-        esp = parseFloat(convert_comma_input(event.target.value));
+        din = parseFloat(convertCommaInput(diamIntIn.value));
+        esp = parseFloat(convertCommaInput(event.target.value));
         diamExtIn.value = (din + 2 * esp).toFixed(2);
     }
-    if (anchors[0] == 'din' && diamIntIn.value == '') {
+    if (anchorsGlobal[0] == 'din' && diamIntIn.value == '') {
         diamExtIn.value = '';
         return;
     }
@@ -64,35 +93,35 @@ espessuraIn.addEventListener('input', (event) => {
 
 diamExtIn.addEventListener('input', (event) => {
     reset_output();
-    if (anchors[1] != 'dex') {
-        anchors.shift();
-        anchors.push('dex');
+    if (anchorsGlobal[1] != 'dex') {
+        anchorsGlobal.shift();
+        anchorsGlobal.push('dex');
     }
-    if (!check_input(event.target.value) && event.target.value != '') {return;}
-    if (!check_input(espessuraIn.value) && !check_input(diamIntIn.value)) {return;}
-    if (anchors[0] == 'esp' && check_input(espessuraIn.value)) {
+    if (!checkInput(event.target.value) && event.target.value != '') {return;}
+    if (!checkInput(espessuraIn.value) && !checkInput(diamIntIn.value)) {return;}
+    if (anchorsGlobal[0] == 'esp' && checkInput(espessuraIn.value)) {
         if (event.target.value == '') {
             diamIntIn.value = '';
             return;
         }
-        dex = parseFloat(convert_comma_input(event.target.value));
-        esp = parseFloat(convert_comma_input(espessuraIn.value));
+        dex = parseFloat(convertCommaInput(event.target.value));
+        esp = parseFloat(convertCommaInput(espessuraIn.value));
         diamIntIn.value = (dex - 2 * esp).toFixed(2);
     }
-    if (anchors[0] == 'esp' && espessuraIn.value == '') {
+    if (anchorsGlobal[0] == 'esp' && espessuraIn.value == '') {
         diamIntIn.value = '';
         return;
     }
-    if (anchors[0] == 'din' && check_input(diamIntIn.value)) {
+    if (anchorsGlobal[0] == 'din' && checkInput(diamIntIn.value)) {
         if (event.target.value == '') {
             espessuraIn.value = '';
             return;
         }
-        din = parseFloat(convert_comma_input(diamIntIn.value));
-        dex = parseFloat(convert_comma_input(event.target.value));
+        din = parseFloat(convertCommaInput(diamIntIn.value));
+        dex = parseFloat(convertCommaInput(event.target.value));
         espessuraIn.value = ((dex - din) / 2).toFixed(2);
     }
-    if (anchors[0] == 'din' && diamIntIn.value == '') {
+    if (anchorsGlobal[0] == 'din' && diamIntIn.value == '') {
         espessuraIn.value = '';
         return;
     }
@@ -101,35 +130,35 @@ diamExtIn.addEventListener('input', (event) => {
 
 diamIntIn.addEventListener('input', (event) => {
     reset_output();
-    if (anchors[1] != 'din') {
-        anchors.shift();
-        anchors.push('din');
+    if (anchorsGlobal[1] != 'din') {
+        anchorsGlobal.shift();
+        anchorsGlobal.push('din');
     }
-    if (!check_input(event.target.value) && event.target.value != '') {return;}
-    if (!check_input(espessuraIn.value) && !check_input(diamExtIn.value)) {return;}
-    if (anchors[0] == 'esp' && check_input(espessuraIn.value)) {
+    if (!checkInput(event.target.value) && event.target.value != '') {return;}
+    if (!checkInput(espessuraIn.value) && !checkInput(diamExtIn.value)) {return;}
+    if (anchorsGlobal[0] == 'esp' && checkInput(espessuraIn.value)) {
         if (event.target.value == '') {
             diamExtIn.value = '';
             return;
         }
-        din = parseFloat(convert_comma_input(event.target.value));
-        esp = parseFloat(convert_comma_input(espessuraIn.value));
+        din = parseFloat(convertCommaInput(event.target.value));
+        esp = parseFloat(convertCommaInput(espessuraIn.value));
         diamExtIn.value = (din + 2 * esp).toFixed(2);
     }
-    if (anchors[0] == 'esp' && espessuraIn.value == '') {
+    if (anchorsGlobal[0] == 'esp' && espessuraIn.value == '') {
         diamExtIn.value = '';
         return;
     }
-    if (anchors[0] == 'dex' && check_input(diamExtIn.value)) {
+    if (anchorsGlobal[0] == 'dex' && checkInput(diamExtIn.value)) {
         if (event.target.value == '') {
             espessuraIn.value = '';
             return;
         }
-        din = parseFloat(convert_comma_input(event.target.value));
-        dex = parseFloat(convert_comma_input(diamExtIn.value));
+        din = parseFloat(convertCommaInput(event.target.value));
+        dex = parseFloat(convertCommaInput(diamExtIn.value));
         espessuraIn.value = ((dex - din) / 2).toFixed(2);
     }
-    if (anchors[0] == 'dex' && diamExtIn.value == '') {
+    if (anchorsGlobal[0] == 'dex' && diamExtIn.value == '') {
         espessuraIn.value = '';
         return;
     }
@@ -137,27 +166,69 @@ diamIntIn.addEventListener('input', (event) => {
 });
 
 comprimentoIn.addEventListener('input', () => {
-    reset_output();
+    if (renderedGlobal === true) {
+        botaoCalc.click();
+    }
 });
 
 anguloIn.addEventListener('input', () => {
-    reset_output();
+    if (checkInput(anguloIn.value) && checkInput(diamExtIn.value)) {
+        let angulo = parseFloat(convertCommaInput(anguloIn.value));
+        let abertura = Math.cos(Math.PI * ( -1 + (angulo/180)) / 2) * parseFloat(convertCommaInput(diamExtIn.value));
+        aberturaExtIn.value = abertura.toFixed(2);
+    }
+    if (renderedGlobal === true) {
+        botaoCalc.click();
+    }
+    if (renderedGlobal === false && areAllInputsOk()) {
+        outWarn.innerHTML = ''
+    }
+});
+
+aberturaExtIn.addEventListener('input', () => {
+    calcAngulo();
+    if (renderedGlobal === true) {
+        botaoCalc.click();
+    }
+    if (renderedGlobal === false && areAllInputsOk()) {
+        outWarn.innerHTML = ''
+    }
+});
+
+function calcAngulo(){
+    if (checkInput(aberturaExtIn.value) && checkInput(diamExtIn.value)) {
+        let abertura = parseFloat(convertCommaInput(aberturaExtIn.value));
+        if (invertedGlobal) {
+            let angulo = 360 - 360 * Math.acos(abertura / (parseFloat(convertCommaInput(diamExtIn.value)))) / Math.PI - 180;
+            anguloIn.value = angulo.toFixed(2);
+        } else {
+            let angulo = 360 * Math.acos(abertura / (parseFloat(convertCommaInput(diamExtIn.value)))) / Math.PI + 180;
+            anguloIn.value = angulo.toFixed(2);
+        }
+    }
+    if (aberturaExtIn.value == '') {
+        anguloIn.value = 360;
+    }
+}
+
+botaoInverter.addEventListener('click', () => {
+    invertedGlobal = !invertedGlobal;
+    calcAngulo();
+    if (renderedGlobal === true) {
+        botaoCalc.click();
+    }
 });
 
 botaoCalc.addEventListener('click', () => {
     reset_output();
     outWarn.innerHTML = 'Dados Inválidos';
-    if (!check_input(espessuraIn.value)) {return;}
-    if (!check_input(diamExtIn.value)) {return;}
-    if (!check_input(diamIntIn.value)) {return;}
-    if (!check_input(anguloIn.value)) {return;}
-    if (!check_input(comprimentoIn.value) && comprimentoIn.value != '') {return;}
-    let esp = parseFloat(convert_comma_input(espessuraIn.value));
-    let dext = parseFloat(convert_comma_input(diamExtIn.value));
-    let angulo = parseFloat(convert_comma_input(anguloIn.value));
-    if (angulo > 360 || angulo <= 0) {return;}
+    if (!areAllInputsOk()) {return;}
+    let esp = parseFloat(convertCommaInput(espessuraIn.value));
+    let dext = parseFloat(convertCommaInput(diamExtIn.value));
+    let angulo = parseFloat(convertCommaInput(anguloIn.value));
     desenvolvimento(esp, dext, angulo);
     draw(esp, dext, angulo);
+    renderedGlobal = true;
     return;
 });
 
@@ -172,4 +243,3 @@ document.addEventListener('keydown', (event) => {
         botaoCalc.click();
     }
 });
-

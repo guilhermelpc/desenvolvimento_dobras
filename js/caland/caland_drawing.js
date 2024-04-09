@@ -1,3 +1,5 @@
+draw(6.3, 400, 340);
+
 function draw(esp, dext, angulo) {
     drawingDiv.innerHTML = "";
 
@@ -40,6 +42,13 @@ function createSvgContent(esp, dext, angulo, svgWidth, svgHeight) {
 
     // SVG Brackground:
     createSvgElement("rect", {width: svgWidth, height: svgHeight, fill: "white"}, svgElement)
+
+    // Arrow marker:
+    const arrowPathRight = `M 0 0 L 0 ${arrowSize/3} L ${arrowSize} ${arrowSize/6} Z`;
+    const markerRight = createSvgElement("marker", 
+        {id: "arrowheadright", markerWidth:arrowSize,markerHeight:arrowSize,refX:arrowSize,refY:arrowSize/6,
+        markerUnits: "userSpaceOnUse", orient: "auto"}, defsElement);
+    createSvgElement("path", {"d": arrowPathRight,"fill": "grey","stroke-width": 1}, markerRight);
 
     // Top text
     const textTop = createSvgElement("text", {x: 22, y: 22, 'font-size': "16"}, svgElement)
@@ -88,14 +97,6 @@ function createSvgContent(esp, dext, angulo, svgWidth, svgHeight) {
             }, svgElement)
         }
 
-        // Right Arrow:
-        const arrowPathRight = `M 0 0 L 0 ${arrowSize/3} L ${arrowSize} ${arrowSize/6} Z`;
-        const markerRight = createSvgElement("marker", {
-            id: "arrowheadright", markerWidth:arrowSize,markerHeight:arrowSize,refX:arrowSize,refY:arrowSize/6,
-            markerUnits: "userSpaceOnUse", orient: "auto"
-        }, defsElement)
-        createSvgElement("path", {"d": arrowPathRight,"fill": "grey","stroke-width": 1}, markerRight)
-
         const arrowCoordLines = [
             //x1, y1, x2, y2, color:
             [cX, cY + 170.2, (cX + rExtPixels), cY + 170.2, "grey"], // Linha direita externa
@@ -106,42 +107,26 @@ function createSvgContent(esp, dext, angulo, svgWidth, svgHeight) {
             [cX + 40 + 5*("" + esp.toFixed(1)).length-rIntPixels, cY - 107.4, cX-rIntPixels, cY - 107.4, "grey"], // cota espessura linha int
         ];
         for (const line of arrowCoordLines) {
-            let lineElement = document.createElementNS("http://www.w3.org/2000/svg", "polyline");
-            lineElement.setAttribute("points", `${line[0]},${line[1]},${line[2]},${line[3]} `);
-            lineElement.setAttribute("stroke", line[4]); // Set default stroke color
-            lineElement.setAttribute("stroke-width", 1);
-            if (line[0] < line[2]){
-                lineElement.setAttribute("marker-end", "url(#arrowheadright)");
-            } else {
-                lineElement.setAttribute("marker-end", "url(#arrowheadright)");
-            }
-            svgElement.appendChild(lineElement);
+            createSvgElement("polyline", 
+                {points: `${line[0]},${line[1]},${line[2]},${line[3]}`, stroke: line[4], 'stroke-width': 1, "marker-end": "url(#arrowheadright)"}, svgElement);
         };
+
         // Text diâmetro ext:
-        const TextDiamExt = document.createElementNS("http://www.w3.org/2000/svg", "text");
-        TextDiamExt.setAttribute("y", cY+164.4);
-        TextDiamExt.setAttribute("font-size", 16);
         let TextDiamExtCont = "Ø ext " + dext.toFixed(1);
+        let TextDiamExt = createSvgElement("text", {y: `${cY+164.4}`, x: `${cX + 5 - 5 * (TextDiamExtCont.length)}`, 'font-size': 16}, svgElement);
         TextDiamExt.textContent = TextDiamExtCont;
-        TextDiamExt.setAttribute("x", cX + 5 - 5 * (TextDiamExtCont.length));
-        svgElement.appendChild(TextDiamExt);
         // Text diâmetro int:
-        const TextDiamInt = document.createElementNS("http://www.w3.org/2000/svg", "text");
-        TextDiamInt.setAttribute("y", cY+134.8);
-        TextDiamInt.setAttribute("font-size", 16);
         let TextDiamIntCont = "Ø int " + (dext - 2 * esp).toFixed(1);
+        let TextDiamInt = createSvgElement("text", {y: `${cY+134.8}`, x: `${cX + 5 - 5*(TextDiamIntCont.length)}`, 'font-size': 16}, svgElement);
         TextDiamInt.textContent = TextDiamIntCont;
-        TextDiamInt.setAttribute("x", cX + 5 - 5*(TextDiamIntCont.length));
-        svgElement.appendChild(TextDiamInt);
         // Text espessura
-        const textEspessura = document.createElementNS("http://www.w3.org/2000/svg", "text");
-        textEspessura.setAttribute("y", cY - 112);
-        textEspessura.setAttribute("font-size", "16");
         let TextEspessuraCont = "" + esp.toFixed(1);
+        const textEspessura = createSvgElement("text", {
+            y: `${cY - 112}`, x: `${cX + 2*(TextEspessuraCont.length) - rIntPixels + 10}`, 'font-size': 16}, svgElement);
         textEspessura.textContent = TextEspessuraCont;
-        textEspessura.setAttribute("x", cX + 2*(TextEspessuraCont.length) - rIntPixels + 10);
-        svgElement.appendChild(textEspessura);
-    }
+
+    } // final das cotas exclusivas de angulo >= 180
+    
     if (angulo < 180) {
         // Linhas:
         const linesCoord = [
@@ -155,29 +140,23 @@ function createSvgContent(esp, dext, angulo, svgWidth, svgHeight) {
             [endXIn, startYIn + 8, endXIn, startYIn + 145.5, "grey"], // cota interna linha esquerda
             [startXIn, startYIn + 8, startXIn, startYIn + 145.5, "grey"], // cota interna linha direita
         ];
+        
         for (const line of linesCoord) {
-            const lineElement = document.createElementNS("http://www.w3.org/2000/svg", "line");
-            lineElement.setAttribute("x1", line[0]);
-            lineElement.setAttribute("y1", line[1]);
-            lineElement.setAttribute("x2", line[2]);
-            lineElement.setAttribute("y2", line[3]);
-            lineElement.setAttribute("stroke", line[4]); // Set default stroke color
-            lineElement.setAttribute("stroke-width", 1);
-            svgElement.appendChild(lineElement);
+            createSvgElement("line", {
+                x1: line[0], y1: line[1], x2: line[2], y2: line[3], stroke: line[4], "stroke-width": 1
+            }, svgElement)
         }
-    }
+    } //final das cotas exclusivas de angulo > 180
+
     // Text Comprimento:
     let compr = parseFloat(convertCommaInput(comprimentoIn.value));
     if (!isNaN(compr)){
-        const textComprimento = document.createElementNS("http://www.w3.org/2000/svg", "text");
-        
-        textComprimento.setAttribute("y", cY + 201.5);
-        textComprimento.setAttribute("font-size", "16");
         let TestComprCont = "Comprimento: " + parseFloat(convertCommaInput(comprimentoIn.value)) + " mm";
+        const textComprimento = createSvgElement("text", 
+            {y: `${cY + 201.5}`, x: `${cX - 4 * TestComprCont.length - 15}`, 'font-size': 16}, svgElement);
         textComprimento.textContent = TestComprCont;
-        textComprimento.setAttribute("x", cX - 4 * TestComprCont.length - 15);
-        svgElement.appendChild(textComprimento);
     }
+
     return svgElement.outerHTML;
 }
 

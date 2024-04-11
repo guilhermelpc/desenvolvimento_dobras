@@ -4,7 +4,7 @@ const pesoOut = document.getElementById('peso');
 const drawingDiv = document.getElementById("drawing");
 var renderedGlobal = false;
 
-function reset_output() {
+function resetOutput() {
     const svgDiv = document.getElementById("drawing");
     outWarn.innerHTML = '';
     desenvOut.innerHTML = '';

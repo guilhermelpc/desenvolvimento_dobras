@@ -27,6 +27,10 @@ function createSvgContent(esp, dext, angulo, folhaWidth, folhaHeight) {
     const rExtScaled = 63.3 / 2; // Define a escala do desenho = 95 / raio_externo [px / mm]
     const rIntScaled = rExtScaled * ((dext/2 - esp)/(dext/2));
     const arrowSize = 0.15 * rExtScaled;
+    // SVG Std Styles:
+    let stdLineWidth = 0.3
+    let stdTextSize = 4
+    let stdDigitLen = 2.4 * stdTextSize
 
     // SVG Element:
     const svgElement = document.createElementNS("http://www.w3.org/2000/svg", "svg");
@@ -35,14 +39,10 @@ function createSvgContent(esp, dext, angulo, folhaWidth, folhaHeight) {
     svgElement.setAttribute("viewBox", viewBox);
     svgElement.setAttribute("width", folhaWidth * 4);
     svgElement.setAttribute("height", folhaHeight * 4);
-    // SVG Std Styles:
+    // SVG Style Element:
     const styleElement = document.createElementNS("http://www.w3.org/2000/svg", "style");
     styleElement.textContent = `text {font-family:Courier, monospace;}`;
     svgElement.appendChild(styleElement);
-    let stdLineWidth = 0.3
-    let stdTextSize = 4
-    let stdDigitLen = 2.4 * stdTextSize
-
     // SVG Brackground:
     createSvgElement("rect", {width: folhaWidth, height: folhaHeight, fill: "white"}, svgElement)
 
@@ -58,8 +58,8 @@ function createSvgContent(esp, dext, angulo, folhaWidth, folhaHeight) {
     textTop.textContent = "Dimensões em milímetros"
 
     // Ext. Arc:
-    let bigger = 1;
-    if (angulo < 180) {bigger = 0;}
+    let bigger = (angulo<180) ? 0 : 1;
+
     let angAbertura = 2 * Math.PI - angulo * Math.PI / 180 + 1e-5;
     let angPonto = (Math.PI - angAbertura) / 2;
     let startY = cY - rExtScaled * Math.sin(angPonto);
@@ -98,7 +98,7 @@ function createSvgContent(esp, dext, angulo, folhaWidth, folhaHeight) {
             }, svgElement);
         }
 
-        createDimLine({x1: (cX + rExtScaled), y1: cY, x2: (cX + rIntScaled), y2: cY}, 48, svgElement, align="h"); // cota espessura
+        createDimLine({x1: (cX + rExtScaled), y1: cY, x2: (cX + rIntScaled), y2: cY}, 48, svgElement, esp, align="h"); // cota espessura
 
         const arrowCoordLines = [
             //x1, y1, x2, y2, color:
@@ -166,7 +166,7 @@ function createSvgContent(esp, dext, angulo, folhaWidth, folhaHeight) {
     return svgElement.outerHTML;
 }
 
-function createDimLine(xyObj, distance, parentElement, align="aligned", color="grey", strokeWidth="0.3", offset=2){
+function createDimLine(xyObj, distance, parentElement, text, align="aligned", color="grey", strokeWidth="0.3", offset=2){
     // Cotas horizontais:
     if (align === "horizontal" || align === "h") { 
         if (xyObj.y1 >= xyObj.y2) { refY = xyObj.y1 } else { refY = xyObj.y2 }
@@ -194,8 +194,7 @@ function createDimLine(xyObj, distance, parentElement, align="aligned", color="g
         }
 
     // Cotas verticais:
-    } else if (align === "vertical" || align === "v") { // Cotas verticais 
-        
+    } else if (align === "vertical" || align === "v") {
 
     // Cotas alinhadas: 
     } else {
@@ -210,7 +209,6 @@ function createSvgElement(elementName, attributes, parentElement, innerHTML = nu
     for (const [key, value] of Object.entries(attributes)) {
         element.setAttributeNS(null, key, value);
     }
-
 
     if (innerHTML) {
         element.innerHTML = innerHTML;

@@ -43,7 +43,7 @@ function areAllInputsOk() {
     return true;
 }
 
-function reset_input(){
+function resetInput(){
     espessuraIn.value = '';
     diamExtIn.value = '';
     diamIntIn.value = '';
@@ -54,8 +54,36 @@ function reset_input(){
     return;
 }
 
+function setAngulo(){
+    if (checkInput(aberturaExtIn.value) && checkInput(diamExtIn.value)) {
+        let abertura = parseFloat(convertCommaInput(aberturaExtIn.value));
+        if (invertedGlobal) {
+            let angulo = 360 - 360 * Math.acos(abertura / (parseFloat(convertCommaInput(diamExtIn.value)))) / Math.PI - 180;
+            anguloIn.value = angulo.toFixed(2);
+            return;
+        } else {
+            let angulo = 360 * Math.acos(abertura / (parseFloat(convertCommaInput(diamExtIn.value)))) / Math.PI + 180;
+            anguloIn.value = angulo.toFixed(2);
+            return;
+        }
+    }
+    if (aberturaExtIn.value == '' && anguloIn.value != "360") {
+        anguloIn.value = 360;
+        return;
+    }
+}
+
+function setAbertura(){
+    if (checkInput(anguloIn.value) && checkInput(diamExtIn.value)) {
+        let angulo = parseFloat(convertCommaInput(anguloIn.value));
+        let abertura = Math.cos(Math.PI * ( -1 + (angulo/180)) / 2) * parseFloat(convertCommaInput(diamExtIn.value));
+        aberturaExtIn.value = abertura.toFixed(2);
+    }
+    return;
+}
+
 espessuraIn.addEventListener('input', (event) => {
-    reset_output();
+    resetOutput();
     if (anchorsGlobal[1] != 'esp') { // if anchorsGlobal = ['any','any_except_esp']
         anchorsGlobal.shift(); // anchorsGlobal = ['any_except_esp']
         anchorsGlobal.push('esp'); // anchorsGlobal = ['any_except_esp','esp']
@@ -70,6 +98,7 @@ espessuraIn.addEventListener('input', (event) => {
         dex = parseFloat(convertCommaInput(diamExtIn.value));
         esp = parseFloat(convertCommaInput(event.target.value));
         diamIntIn.value = (dex - 2 * esp).toFixed(2);
+        setAngulo();
     }
     if (anchorsGlobal[0] == 'dex' && diamExtIn.value == '') { // if anchorsGlobal = ['dex','']
         diamIntIn.value = '';
@@ -83,6 +112,7 @@ espessuraIn.addEventListener('input', (event) => {
         din = parseFloat(convertCommaInput(diamIntIn.value));
         esp = parseFloat(convertCommaInput(event.target.value));
         diamExtIn.value = (din + 2 * esp).toFixed(2);
+        setAngulo();
     }
     if (anchorsGlobal[0] == 'din' && diamIntIn.value == '') {
         diamExtIn.value = '';
@@ -92,7 +122,7 @@ espessuraIn.addEventListener('input', (event) => {
 });
 
 diamExtIn.addEventListener('input', (event) => {
-    reset_output();
+    resetOutput();
     if (anchorsGlobal[1] != 'dex') {
         anchorsGlobal.shift();
         anchorsGlobal.push('dex');
@@ -107,6 +137,7 @@ diamExtIn.addEventListener('input', (event) => {
         dex = parseFloat(convertCommaInput(event.target.value));
         esp = parseFloat(convertCommaInput(espessuraIn.value));
         diamIntIn.value = (dex - 2 * esp).toFixed(2);
+        setAngulo();
     }
     if (anchorsGlobal[0] == 'esp' && espessuraIn.value == '') {
         diamIntIn.value = '';
@@ -120,6 +151,7 @@ diamExtIn.addEventListener('input', (event) => {
         din = parseFloat(convertCommaInput(diamIntIn.value));
         dex = parseFloat(convertCommaInput(event.target.value));
         espessuraIn.value = ((dex - din) / 2).toFixed(2);
+        setAngulo();
     }
     if (anchorsGlobal[0] == 'din' && diamIntIn.value == '') {
         espessuraIn.value = '';
@@ -129,7 +161,7 @@ diamExtIn.addEventListener('input', (event) => {
 });
 
 diamIntIn.addEventListener('input', (event) => {
-    reset_output();
+    resetOutput();
     if (anchorsGlobal[1] != 'din') {
         anchorsGlobal.shift();
         anchorsGlobal.push('din');
@@ -144,6 +176,7 @@ diamIntIn.addEventListener('input', (event) => {
         din = parseFloat(convertCommaInput(event.target.value));
         esp = parseFloat(convertCommaInput(espessuraIn.value));
         diamExtIn.value = (din + 2 * esp).toFixed(2);
+        setAngulo();
     }
     if (anchorsGlobal[0] == 'esp' && espessuraIn.value == '') {
         diamExtIn.value = '';
@@ -157,6 +190,7 @@ diamIntIn.addEventListener('input', (event) => {
         din = parseFloat(convertCommaInput(event.target.value));
         dex = parseFloat(convertCommaInput(diamExtIn.value));
         espessuraIn.value = ((dex - din) / 2).toFixed(2);
+        setAngulo();
     }
     if (anchorsGlobal[0] == 'dex' && diamExtIn.value == '') {
         espessuraIn.value = '';
@@ -172,55 +206,35 @@ comprimentoIn.addEventListener('input', () => {
 });
 
 anguloIn.addEventListener('input', () => {
-    if (checkInput(anguloIn.value) && checkInput(diamExtIn.value)) {
-        let angulo = parseFloat(convertCommaInput(anguloIn.value));
-        let abertura = Math.cos(Math.PI * ( -1 + (angulo/180)) / 2) * parseFloat(convertCommaInput(diamExtIn.value));
-        aberturaExtIn.value = abertura.toFixed(2);
-    }
+    setAbertura();
     if (renderedGlobal === true) {
         botaoCalc.click();
     }
     if (renderedGlobal === false && areAllInputsOk()) {
-        outWarn.innerHTML = ''
+        outWarn.innerHTML = '';
     }
 });
 
 aberturaExtIn.addEventListener('input', () => {
-    calcAngulo();
+    setAngulo();
     if (renderedGlobal === true) {
         botaoCalc.click();
     }
     if (renderedGlobal === false && areAllInputsOk()) {
-        outWarn.innerHTML = ''
+        outWarn.innerHTML = '';
     }
 });
 
-function calcAngulo(){
-    if (checkInput(aberturaExtIn.value) && checkInput(diamExtIn.value)) {
-        let abertura = parseFloat(convertCommaInput(aberturaExtIn.value));
-        if (invertedGlobal) {
-            let angulo = 360 - 360 * Math.acos(abertura / (parseFloat(convertCommaInput(diamExtIn.value)))) / Math.PI - 180;
-            anguloIn.value = angulo.toFixed(2);
-        } else {
-            let angulo = 360 * Math.acos(abertura / (parseFloat(convertCommaInput(diamExtIn.value)))) / Math.PI + 180;
-            anguloIn.value = angulo.toFixed(2);
-        }
-    }
-    if (aberturaExtIn.value == '') {
-        anguloIn.value = 360;
-    }
-}
-
 botaoInverter.addEventListener('click', () => {
     invertedGlobal = !invertedGlobal;
-    calcAngulo();
+    setAngulo();
     if (renderedGlobal === true) {
         botaoCalc.click();
     }
 });
 
 botaoCalc.addEventListener('click', () => {
-    reset_output();
+    resetOutput();
     outWarn.innerHTML = 'Dados Inválidos';
     if (!areAllInputsOk()) {return;}
     let esp = parseFloat(convertCommaInput(espessuraIn.value));
@@ -233,8 +247,8 @@ botaoCalc.addEventListener('click', () => {
 });
 
 botaoReset.addEventListener('click', () => {
-    reset_input();
-    reset_output();
+    resetInput();
+    resetOutput();
     return;
 });
 

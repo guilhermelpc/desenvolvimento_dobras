@@ -1,7 +1,8 @@
 class arcOutLine {
     constructor(dext, esp, angulo, cY, cX, parentElement, scale, color="black", strokeWidth="0.3") {
         this.dext = dext;
-        this.rExtPaperScale = this.dext * scale / 2; // Define a escala do desenho = 95 / raio_externo [px / mm]
+        this.rExtPaperScale = dext * scale / 2; // Define a escala do desenho = 95 / raio_externo [px / mm]
+        this.rIntPaperScale = this.rExtPaperScale * ((dext/2 - esp)/(dext/2));
         this.esp = esp;
         this.angulo = angulo;
         this.cY = cY;
@@ -9,9 +10,9 @@ class arcOutLine {
         this.parentElement = parentElement;
         this.color = color;
         this.strokeWidth = strokeWidth;
-        // this.arcElement = ;
-
+        this.arcGroupElement = document.createElementNS("http://www.w3.org/2000/svg", "g");
         this.createArc();
+        parentElement.appendChild(this.arcGroupElement);
     }
 
     createArc() {
@@ -26,7 +27,7 @@ class arcOutLine {
         createSvgElement('path', {
             d: `M ${startX} ${startY} A ${this.rExtPaperScale} ${this.rExtPaperScale} 0 ${bigger} 1 ${endX} ${startY}`,
             stroke: "black", fill: "transparent", 'stroke-width': this.strokeWidth
-        }, this.parentElement);
+        }, this.arcGroupElement);
         // Int. Arc:
         let startYIn = this.cY - rIntPaperScale * Math.sin(angPonto);
         let startXIn = this.cX + rIntPaperScale * Math.cos(angPonto);
@@ -34,7 +35,7 @@ class arcOutLine {
         createSvgElement('path', {
             d: `M ${startXIn} ${startYIn} A ${rIntPaperScale} ${rIntPaperScale} 0 ${bigger} 1 ${endXIn} ${startYIn}`,
             stroke: "black", fill: "transparent", 'stroke-width': this.strokeWidth
-        }, this.parentElement);
+        }, this.arcGroupElement);
         // Linhas fechamento arco:
         const linesCoord = [
             [startX, startY, startXIn, startYIn, "black"], // linha arcos 1
@@ -43,25 +44,29 @@ class arcOutLine {
         for (const line of linesCoord) {
             createSvgElement("line", {
                 x1: line[0], y1: line[1], x2: line[2], y2: line[3], stroke: line[4], "stroke-width": this.strokeWidth
-            }, this.parentElement);
+            }, this.arcGroupElement);
         }
     }
 
     createCenterMark() {
-
-    }
-
-    createDimLines() {
         // Linhas:
         const linesCoord = [
-            [cX - 0.32 * rIntPaperScale, cY, cX + 0.32 * rIntPaperScale, cY, "grey"], // linha centro horizontal
-            [cX, cY - 0.32 * rIntPaperScale, cX, cY + 0.32 * rIntPaperScale, "grey"], // linha centro vertical
+            [this.cX - 0.32 * this.rIntPaperScale, this.cY, this.cX + 0.32 * this.rIntPaperScale, this.cY, "grey"], // linha centro horizontal
+            [this.cX, this.cY - 0.32 * this.rIntPaperScale, this.cX, this.cY + 0.32 * this.rIntPaperScale, "grey"], // linha centro vertical
         ];
         for (const line of linesCoord) {
             createSvgElement("line", {
-                x1: line[0], y1: line[1], x2: line[2], y2: line[3], stroke: line[4], "stroke-width": stdLineWidth
-            }, svgElement);
+                x1: line[0], y1: line[1], x2: line[2], y2: line[3], stroke: line[4], "stroke-width": this.strokeWidth
+            }, this.arcGroupElement);
         }
+    }
+
+    createDimLines() {
+                
+    }
+
+    createSideView() {
+        
     }
 }
 
@@ -138,8 +143,6 @@ function createSvgContent(esp, dext, angulo, folhaWidth, folhaHeight) {
 
     if (angulo >= 180) {
         arc1.createCenterMark();
-        
-
         // Parameters: createDimLine(xyObj, distance, parentElement, textHeight, scale, text = "", align="aligned", color="grey", strokeWidth="0.3"):
         createDimLine({x1: (cX + rIntPaperScale), y1: cY, x2: (cX + rExtPaperScale), y2: cY}, 48, svgElement, stdTextHeight, scaleMmMm, text='', align="h"); // cota espessura
         createDimLine({x1: (cX + rExtPaperScale), y1: cY, x2: (cX - rExtPaperScale), y2:cY}, -60, svgElement, stdTextHeight, scaleMmMm, text='Ø ext ', align="h"); // cota dExt
@@ -177,44 +180,6 @@ function createSvgContent(esp, dext, angulo, folhaWidth, folhaHeight) {
 
     return svgElement.outerHTML;
 }
-
-
-
-// function drawArcOutline(dext, esp, angulo, cY, cX, parentElement, scale, color="black", strokeWidth="0.3") {
-//     let rExtPaperScale = dext * scale / 2; // Define a escala do desenho = 95 / raio_externo [px / mm]
-//     let rIntPaperScale = rExtPaperScale * ((dext/2 - esp)/(dext/2));
-//     // Ext. Arc:
-//     let bigger = (angulo<180) ? 0 : 1;
-//     let angAbertura = 2 * Math.PI - angulo * Math.PI / 180 + 1e-5;
-//     let angPonto = (Math.PI - angAbertura) / 2;
-//     let startY = cY - rExtPaperScale * Math.sin(angPonto);
-//     let startX = cX + rExtPaperScale * Math.cos(angPonto);
-//     let endX = cX - rExtPaperScale * Math.cos(angPonto);
-//     createSvgElement('path', {
-//         d: `M ${startX} ${startY} A ${rExtPaperScale} ${rExtPaperScale} 0 ${bigger} 1 ${endX} ${startY}`,
-//         stroke: "black", fill: "transparent", 'stroke-width': strokeWidth
-//     }, parentElement);
-//     // Int. Arc:
-//     let startYIn = cY - rIntPaperScale * Math.sin(angPonto);
-//     let startXIn = cX + rIntPaperScale * Math.cos(angPonto);
-//     let endXIn = cX - rIntPaperScale * Math.cos(angPonto);
-//     createSvgElement('path', {
-//         d: `M ${startXIn} ${startYIn} A ${rIntPaperScale} ${rIntPaperScale} 0 ${bigger} 1 ${endXIn} ${startYIn}`,
-//         stroke: "black", fill: "transparent", 'stroke-width': strokeWidth
-//     }, parentElement);
-//     // Linhas fechamento arco:
-//     const linesCoord = [
-//         [startX, startY, startXIn, startYIn, "black"], // linha arcos 1
-//         [endX, startY, endXIn, startYIn, "black"], // linha arcos 2
-//     ];
-//     for (const line of linesCoord) {
-//         createSvgElement("line", {
-//             x1: line[0], y1: line[1], x2: line[2], y2: line[3], stroke: line[4], "stroke-width": strokeWidth
-//         }, parentElement);
-//     }
-
-//     return;
-// }
 
 function createDimLine(xyObj, distance, parentElement, textHeight, scale, text = "", align="aligned", color="grey", strokeWidth="0.3"){
     let digitLen = textHeight / 1.8;

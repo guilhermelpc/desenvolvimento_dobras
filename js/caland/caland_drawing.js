@@ -15,6 +15,7 @@ class arcOutLine {
         this.color = color;
         this.textHeight = textHeight;
         this.strokeWidth = strokeWidth;
+        this.limCompr = 48;
 
         this.bigger = (this.angulo<180) ? 0 : 1;
         const angAbertura = 2 * Math.PI - this.angulo * Math.PI / 180 + 1e-5;
@@ -107,14 +108,20 @@ class arcOutLine {
             createDimLine({x1: this.startXIn, y1: this.startYIn, x2: this.endXIn, y2: this.startYIn}, -48, this.arcGroupElement, this.textHeight, this.scale, '', "h"); // cota abertura Int
         }
 
-        if (this.comprimento) {}
+        if (this.comprimento) {
+            let comprPaperScale = Math.min(this.comprimento, this.limCompr);
+            createDimLine({
+                x1: (this.cX + 73.5), y1: (this.cY + this.rExtPaperScale), x2: (this.cX + 73.5 + comprPaperScale), y2: (this.cY + this.rExtPaperScale)
+            }, -28, this.arcGroupElement, this.textHeight, this.scale, '',"h","grey","0.3", this.comprimento.toFixed(2)); // cota dExt
+
+        }
     }
 
     createSideView(comprimento)
     {
         const alturaPaperScale = this.rExtPaperScale + (this.cY - Math.min(this.startYIn, this.startY));
   
-        if (comprimento > 48) {
+        if (comprimento > this.limCompr) {
             // Create rect with line break in the middle
             if (this.angulo == 360) {
 

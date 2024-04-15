@@ -50,6 +50,7 @@ function resetInput(){
     comprimentoIn.value = '';
     anguloIn.value = '360';
     aberturaExtIn.value = '0';
+    invertedGlobal = false;
     anchorsGlobal = ['', '']; 
     return;
 }

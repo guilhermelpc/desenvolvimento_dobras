@@ -10,12 +10,23 @@ class arcOutLine {
         this.parentElement = parentElement;
         this.color = color;
         this.strokeWidth = strokeWidth;
-        this.arcGroupElement = document.createElementNS("http://www.w3.org/2000/svg", "g");
-        this.createArc();
-        parentElement.appendChild(this.arcGroupElement);
+        const arcGroupElement = document.createElementNS("http://www.w3.org/2000/svg", "g");
+
+        // let rIntPaperScale = this.rExtPaperScale * ((this.dext/2 - this.esp)/(this.dext/2));
+        // // Ext. Arc:
+        // let bigger = (this.angulo<180) ? 0 : 1;
+        // let angAbertura = 2 * Math.PI - this.angulo * Math.PI / 180 + 1e-5;
+        // let angPonto = (Math.PI - angAbertura) / 2;
+        // let startY = this.cY - this.rExtPaperScale * Math.sin(angPonto);
+        // let startX = this.cX + this.rExtPaperScale * Math.cos(angPonto);
+        // let endX = this.cX - this.rExtPaperScale * Math.cos(angPonto);
+        
+        this.createArc(arcGroupElement);
+        this.createCenterMark(arcGroupElement);
+        parentElement.appendChild(arcGroupElement);
     }
 
-    createArc() {
+    createArc(arcGroupElement) {
         let rIntPaperScale = this.rExtPaperScale * ((this.dext/2 - this.esp)/(this.dext/2));
         // Ext. Arc:
         let bigger = (this.angulo<180) ? 0 : 1;
@@ -27,7 +38,7 @@ class arcOutLine {
         createSvgElement('path', {
             d: `M ${startX} ${startY} A ${this.rExtPaperScale} ${this.rExtPaperScale} 0 ${bigger} 1 ${endX} ${startY}`,
             stroke: "black", fill: "transparent", 'stroke-width': this.strokeWidth
-        }, this.arcGroupElement);
+        }, arcGroupElement);
         // Int. Arc:
         let startYIn = this.cY - rIntPaperScale * Math.sin(angPonto);
         let startXIn = this.cX + rIntPaperScale * Math.cos(angPonto);
@@ -35,7 +46,7 @@ class arcOutLine {
         createSvgElement('path', {
             d: `M ${startXIn} ${startYIn} A ${rIntPaperScale} ${rIntPaperScale} 0 ${bigger} 1 ${endXIn} ${startYIn}`,
             stroke: "black", fill: "transparent", 'stroke-width': this.strokeWidth
-        }, this.arcGroupElement);
+        }, arcGroupElement);
         // Linhas fechamento arco:
         const linesCoord = [
             [startX, startY, startXIn, startYIn, "black"], // linha arcos 1
@@ -44,20 +55,32 @@ class arcOutLine {
         for (const line of linesCoord) {
             createSvgElement("line", {
                 x1: line[0], y1: line[1], x2: line[2], y2: line[3], stroke: line[4], "stroke-width": this.strokeWidth
-            }, this.arcGroupElement);
+            }, arcGroupElement);
         }
     }
 
-    createCenterMark() {
+    createCenterMark(arcGroupElement) {
         // Linhas:
-        const linesCoord = [
-            [this.cX - 0.32 * this.rIntPaperScale, this.cY, this.cX + 0.32 * this.rIntPaperScale, this.cY, "grey"], // linha centro horizontal
-            [this.cX, this.cY - 0.32 * this.rIntPaperScale, this.cX, this.cY + 0.32 * this.rIntPaperScale, "grey"], // linha centro vertical
-        ];
-        for (const line of linesCoord) {
-            createSvgElement("line", {
-                x1: line[0], y1: line[1], x2: line[2], y2: line[3], stroke: line[4], "stroke-width": this.strokeWidth
-            }, this.arcGroupElement);
+        if (this.angulo >= 180) {
+            const linesCoord = [
+                [this.cX - 0.32 * this.rIntPaperScale, this.cY, this.cX + 0.32 * this.rIntPaperScale, this.cY, "grey"], // linha centro horizontal
+                [this.cX, this.cY - 0.32 * this.rIntPaperScale, this.cX, this.cY + 0.32 * this.rIntPaperScale, "grey"], // linha centro vertical
+            ];
+            for (const line of linesCoord) {
+                createSvgElement("line", {
+                    x1: line[0], y1: line[1], x2: line[2], y2: line[3], stroke: line[4], "stroke-width": this.strokeWidth
+                }, arcGroupElement);
+            }
+        } else {
+            const linesCoord = [
+                [this.cX - 0.1 * this.rIntPaperScale, this.cY, this.cX + 0.1 * this.rIntPaperScale, this.cY, "grey"], // linha centro horizontal
+                [this.cX, this.cY - 0.1 * this.rIntPaperScale, this.cX, this.cY + 0.1 * this.rIntPaperScale, "grey"], // linha centro vertical
+            ];
+            for (const line of linesCoord) {
+                createSvgElement("line", {
+                    x1: line[0], y1: line[1], x2: line[2], y2: line[3], stroke: line[4], "stroke-width": this.strokeWidth
+                }, arcGroupElement);
+            }
         }
     }
 
@@ -70,6 +93,7 @@ class arcOutLine {
     }
 }
 
+// Test initial conditions:
 draw(6.3, 400, 270);
 
 function draw(esp, dext, angulo) {
@@ -92,7 +116,6 @@ function draw(esp, dext, angulo) {
 
 function createSvgContent(esp, dext, angulo, folhaWidth, folhaHeight) {
     const viewBox = `0 0 ${folhaWidth} ${folhaHeight}`
-
     let scaleMmMm = 63.3 / dext
     let rExtPaperScale = dext * scaleMmMm / 2; // Define a escala do desenho = 95 / raio_externo [px / mm]
     let rIntPaperScale = rExtPaperScale * ((dext/2 - esp)/(dext/2));
@@ -129,8 +152,8 @@ function createSvgContent(esp, dext, angulo, folhaWidth, folhaHeight) {
     const textTop = createSvgElement("text", {x: 22, y: 22, 'font-size': stdTextHeight}, svgElement)
     textTop.textContent = "Dimensões em milímetros"
 
-    // PARÂMETROS drawArcOutline(dext, esp, angulo, cY, cX, parentElement, scale, color="black", strokeWidth="0.3");
-    let arc1 = new arcOutLine(dext, esp, angulo, cY, cX, svgElement, scaleMmMm, "black", stdLineWidth);
+    // PARÂMETROS constructor(dext, esp, angulo, cY, cX, parentElement, scale, color="black", strokeWidth="0.3");
+    let arc1 = new arcOutLine(dext, esp, angulo, cY, cX, svgElement, scaleMmMm);
 
     let angAbertura = 2 * Math.PI - angulo * Math.PI / 180 + 1e-5;
     let angPonto = (Math.PI - angAbertura) / 2;
@@ -142,7 +165,6 @@ function createSvgContent(esp, dext, angulo, folhaWidth, folhaHeight) {
     let endXIn = cX - rIntPaperScale * Math.cos(angPonto);
 
     if (angulo >= 180) {
-        arc1.createCenterMark();
         // Parameters: createDimLine(xyObj, distance, parentElement, textHeight, scale, text = "", align="aligned", color="grey", strokeWidth="0.3"):
         createDimLine({x1: (cX + rIntPaperScale), y1: cY, x2: (cX + rExtPaperScale), y2: cY}, 48, svgElement, stdTextHeight, scaleMmMm, text='', align="h"); // cota espessura
         createDimLine({x1: (cX + rExtPaperScale), y1: cY, x2: (cX - rExtPaperScale), y2:cY}, -60, svgElement, stdTextHeight, scaleMmMm, text='Ø ext ', align="h"); // cota dExt
@@ -155,28 +177,18 @@ function createSvgContent(esp, dext, angulo, folhaWidth, folhaHeight) {
     
     if (angulo < 180) {
         // Linhas:
-        const linesCoord = [
-            [cX - 0.1 * rIntPaperScale, cY, cX + 0.1 * rIntPaperScale, cY, "grey"], // linha centro horizontal
-            [cX, cY - 0.1 * rIntPaperScale, cX, cY + 0.1 * rIntPaperScale, "grey"], // linha centro vertical
-        ];
-        
-        for (const line of linesCoord) {
-            createSvgElement("line", {
-                x1: line[0], y1: line[1], x2: line[2], y2: line[3], stroke: line[4], "stroke-width": stdLineWidth
-            }, svgElement)
-        }
         createDimLine({x1: startX, y1: startY, x2: endX, y2: startY}, -60, svgElement, stdTextHeight, scaleMmMm, text='', align="h"); // cota dExt
         createDimLine({x1: startXIn, y1: startYIn, x2: endXIn, y2: startYIn}, -48, svgElement, stdTextHeight, scaleMmMm, text='', align="h"); // cota dInt
     }
 
-    // Text Comprimento:
-    let compr = parseFloat(convertCommaInput(comprimentoIn.value));
-    if (!isNaN(compr)){
-        let TestComprCont = "Comprimento: " + parseFloat(convertCommaInput(comprimentoIn.value)) + " mm";
-        const textComprimento = createSvgElement("text", 
-            {y: `${cY + 201.5}`, x: `${cX - 4 * TestComprCont.length - 15}`, 'font-size': 16}, svgElement);
-        textComprimento.textContent = TestComprCont;
-    }
+    // // Text Comprimento:
+    // let compr = parseFloat(convertCommaInput(comprimentoIn.value));
+    // if (!isNaN(compr)){
+    //     let TestComprCont = "Comprimento: " + parseFloat(convertCommaInput(comprimentoIn.value)) + " mm";
+    //     const textComprimento = createSvgElement("text", 
+    //         {y: `${cY + 201.5}`, x: `${cX - 4 * TestComprCont.length - 15}`, 'font-size': 16}, svgElement);
+    //     textComprimento.textContent = TestComprCont;
+    // }
 
     return svgElement.outerHTML;
 }

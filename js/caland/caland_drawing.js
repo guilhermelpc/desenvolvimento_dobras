@@ -12,10 +12,11 @@ class arcOutLine {
         this.parentElement = parentElement;
         this.scale = scale;
         this.comprimento = comprimento;
+        this.comprPaperScale = comprimento * scale;
         this.color = color;
         this.textHeight = textHeight;
         this.strokeWidth = strokeWidth;
-        this.limCompr = 48;
+        this.limComprPprScl = 50;
 
         this.bigger = (this.angulo<180) ? 0 : 1;
         const angAbertura = 2 * Math.PI - this.angulo * Math.PI / 180 + 1e-5;
@@ -26,6 +27,12 @@ class arcOutLine {
         this.startYIn = this.cY - this.rIntPaperScale * Math.sin(angPonto);
         this.startXIn = this.cX + this.rIntPaperScale * Math.cos(angPonto);
         this.endXIn = this.cX - this.rIntPaperScale * Math.cos(angPonto);
+
+        this.distBetweenViews = 41.9;
+        this.centerMarkActive = false;
+        this.sideViewActive = false;
+
+        this.attributes = {sideView: false, dimLines: false, centerLines: false, hiddenLines: false};
 
         parentElement.appendChild(this.arcGroupElement);
     }
@@ -54,7 +61,7 @@ class arcOutLine {
         }
     }
 
-    createCenterMark() 
+    createCenterMarkFront() 
     {
         // Linhas:
         if (this.angulo >= 180) {
@@ -64,7 +71,7 @@ class arcOutLine {
             ];
             for (const line of linesCoord) {
                 createSvgElement("line", {
-                    x1: line[0], y1: line[1], x2: line[2], y2: line[3], stroke: line[4], "stroke-width": this.strokeWidth
+                    x1: line[0], y1: line[1], x2: line[2], y2: line[3], stroke: line[4], "stroke-width": this.strokeWidth, 
                 }, this.arcGroupElement);
             }
         } else {
@@ -78,6 +85,21 @@ class arcOutLine {
                 }, this.arcGroupElement);
             }
         }
+        this.centerMarkActive = true;
+        if (this.sideViewActive) {
+            console.log('create center side')
+            this.createCenterMarkSide()
+        }
+        return;
+    }
+
+    createCenterMarkSide()
+    {
+        createSvgElement("line", {
+            x1: (this.cX + this.rExtPaperScale + this.distBetweenViews - 10), y1: this.cY, 
+            x2: (this.cX + this.rExtPaperScale + this.distBetweenViews + Math.min(this.comprPaperScale, this.limComprPprScl) + 10), y2: this.cY,
+            "stroke-width": this.strokeWidth, 'stroke-dasharray': "6 2.5 2.7 2.5", stroke: "grey"
+        }, this.arcGroupElement);
     }
 
     createDimLines() 
@@ -103,42 +125,115 @@ class arcOutLine {
                 }, 10, this.arcGroupElement, this.textHeight, this.scale, '', "h"); // cota abertura Int
             }
         } else {
-            // Linhas:
             createDimLine({x1: this.startX, y1: this.startY, x2: this.endX, y2: this.startY}, -60, this.arcGroupElement, this.textHeight, this.scale, '', "h"); // cota abertura Ext
             createDimLine({x1: this.startXIn, y1: this.startYIn, x2: this.endXIn, y2: this.startYIn}, -48, this.arcGroupElement, this.textHeight, this.scale, '', "h"); // cota abertura Int
         }
 
-        if (this.comprimento) {
-            let comprPaperScale = Math.min(this.comprimento, this.limCompr);
+        if (this.comprimento && this.comprimento != 0) {
+            let comprPaperScale = Math.min(this.comprPaperScale, this.limComprPprScl);
             createDimLine({
                 x1: (this.cX + 73.5), y1: (this.cY + this.rExtPaperScale), x2: (this.cX + 73.5 + comprPaperScale), y2: (this.cY + this.rExtPaperScale)
-            }, -28, this.arcGroupElement, this.textHeight, this.scale, '',"h","grey","0.3", this.comprimento.toFixed(2)); // cota dExt
+            }, -28, this.arcGroupElement, this.textHeight, this.scale, '',"h","grey","0.3", this.comprimento.toFixed(1)); // cota dExt
 
         }
     }
 
-    createSideView(comprimento)
+    createSideView()
     {
         const alturaPaperScale = this.rExtPaperScale + (this.cY - Math.min(this.startYIn, this.startY));
+        
+        let sideStartX = this.cX + this.rExtPaperScale + this.distBetweenViews;
+        let sideBottomY = this.cY + this.rExtPaperScale;
   
-        if (comprimento > this.limCompr) {
+        if (this.comprPaperScale > this.limComprPprScl) {
             // Create rect with line break in the middle
-            if (this.angulo == 360) {
+            let breakDistLeft = this.limComprPprScl / 2;
+            let breakDistRight = this.limComprPprScl / 2 - 3.8;
+            let sideEndX = sideStartX + this.limComprPprScl;
 
+            const linesCoord = [
+                [(sideStartX + breakDistLeft), (sideBottomY - alturaPaperScale), (sideStartX), (sideBottomY - alturaPaperScale)], // top left
+                [(sideStartX), (sideBottomY - alturaPaperScale), (sideStartX), (sideBottomY)], // left
+                [(sideStartX + breakDistLeft), (sideBottomY), (sideStartX), (sideBottomY)], // bottom left
+                [(sideEndX - breakDistRight), (sideBottomY), (sideEndX), (sideBottomY)], // bottom right
+                [(sideEndX), (sideBottomY - alturaPaperScale), (sideEndX), (sideBottomY)], // right
+                [(sideEndX - breakDistRight), (sideBottomY - alturaPaperScale), (sideEndX), (sideBottomY - alturaPaperScale)], // top right
+            ];
+            for (const line of linesCoord) {
+                createSvgElement("line", {
+                    x1: line[0], y1: line[1], x2: line[2], y2: line[3], 
+                    "stroke-width": this.strokeWidth, stroke: "black"
+                }, this.arcGroupElement);
             }
+            // Break symbol:
+            const r = 0.1*(alturaPaperScale**1.5);//38.7;
+            const breakSize =  this.limComprPprScl - breakDistLeft - breakDistRight;
+            const arcCoords = [
+                `M ${sideStartX + breakDistLeft} ${sideBottomY} A ${r} ${r} 0 ${0} 1 ${sideStartX + breakDistLeft} ${sideBottomY-alturaPaperScale/2}`,
+                `M ${sideStartX + breakDistLeft} ${sideBottomY-alturaPaperScale/2} A ${r} ${r} 0 ${0} 0 ${sideStartX + breakDistLeft} ${sideBottomY-alturaPaperScale}`,
+                `M ${sideStartX + breakDistLeft + breakSize} ${sideBottomY} A ${r} ${r} 0 ${0} 1 ${sideStartX + breakDistLeft + breakSize} ${sideBottomY-alturaPaperScale/2}`,
+                `M ${sideStartX + breakDistLeft + breakSize} ${sideBottomY-alturaPaperScale/2} A ${r} ${r} 0 ${0} 0 ${sideStartX + breakDistLeft + breakSize} ${sideBottomY-alturaPaperScale}`,
+            ];
+            for (const coords of arcCoords) {
+                createSvgElement('path', {
+                    d: coords,
+                        stroke: "black", fill: "transparent", 'stroke-width': this.strokeWidth
+                    }, this.arcGroupElement);
+            }
+
+            // createSvgElement('path', {
+            // d: `M ${sideStartX + breakDistLeft} ${sideBottomY} A ${r} ${r} 0 ${0} 1 ${sideStartX + breakDistLeft} ${sideBottomY-alturaPaperScale/2}`,
+            //     stroke: "black", fill: "transparent", 'stroke-width': this.strokeWidth
+            // }, this.arcGroupElement);
+            // createSvgElement('path', {
+            //     d: `M ${sideStartX + breakDistLeft} ${sideBottomY-alturaPaperScale/2} A ${r} ${r} 0 ${0} 0 ${sideStartX + breakDistLeft} ${sideBottomY-alturaPaperScale}`,
+            //         stroke: "black", fill: "transparent", 'stroke-width': this.strokeWidth
+            //     }, this.arcGroupElement);
+            
+            
+
+            // if (this.angulo == 360) {
+
+            // }   
         } else {
             // Create full length rect
             createSvgElement('rect', {
-                width: comprimento, height: alturaPaperScale, x: this.cX + 73.5, y: this.cY + this.rExtPaperScale - alturaPaperScale, 
+                width: this.comprPaperScale, height: alturaPaperScale, x: sideStartX, y: this.cY + this.rExtPaperScale - alturaPaperScale, 
                 stroke: "black", fill: "transparent", 'stroke-width': this.strokeWidth
             }, this.arcGroupElement);
+
+            // invisible lines:
+            let dash = this.angulo < 180 ? "0" : "3"
+            const linesCoord = [
+                [sideStartX, this.cY+this.rIntPaperScale, sideStartX+this.comprPaperScale, this.cY+this.rIntPaperScale, "3"], // linha inferior
+                [sideStartX, Math.max(this.startYIn, this.startY), sideStartX+this.comprPaperScale, Math.max(this.startYIn, this.startY), dash], // linha superior  
+            ];
+            for (const line of linesCoord) {
+                createSvgElement("line", {
+                    x1: line[0], y1: line[1], x2: line[2], y2: line[3], 
+                    "stroke-width": this.strokeWidth, 'stroke-dasharray': line[4], stroke: "black"
+                }, this.arcGroupElement);
+            }
         }
-        return;
+        this.sideViewActive = true;
+        if (this.centerMarkActive) {
+            this.createCenterMarkSide();
+        }
+    }
+
+    render(obj)
+    {
+        for (const [key, value] of Object.entries(obj)) {
+        element.setAttributeNS(null, key, value);
+    }
+
     }
 }
 
-// Test initial conditions:
-draw(6.3, 400, 270, 10);
+// Dev environment testing:
+if (window.location.port.includes('5500')) {
+    draw(6.3, 400, 270, 400);
+}
 
 function draw(esp, dext, angulo, comprimento) {
     drawingDiv.innerHTML = "";
@@ -161,8 +256,6 @@ function draw(esp, dext, angulo, comprimento) {
 function createSvgContent(esp, dext, angulo, comprimento, folhaWidth, folhaHeight) {
     const viewBox = `0 0 ${folhaWidth} ${folhaHeight}`
     let scaleMmMm = 63.3 / dext
-    let rExtPaperScale = dext * scaleMmMm / 2; // Define a escala do desenho = 95 / raio_externo [px / mm]
-    let rIntPaperScale = rExtPaperScale * ((dext/2 - esp)/(dext/2));
   
     // Posição vista 1:
     let cX = 63.5;
@@ -198,7 +291,7 @@ function createSvgContent(esp, dext, angulo, comprimento, folhaWidth, folhaHeigh
     // Desenho do arco:
     let arc1 = new arcOutLine(dext, esp, angulo, cY, cX, svgElement, scaleMmMm, comprimento);
     arc1.createArc();
-    arc1.createCenterMark();
+    arc1.createCenterMarkFront();
     if (comprimento != null) {
         arc1.createSideView(comprimento);
     }
@@ -217,7 +310,7 @@ function createDimLine(xyObj, distance, parentElement, textHeight, scale, text =
         if (xyObj.x1 > xyObj.x2) { [xyObj.x1, xyObj.x2] = [xyObj.x2, xyObj.x1]; }
 
         const cotaPaperScale = xyObj.x2 - xyObj.x1;
-        let dimensionTxt = text + (cotaPaperScale / scale).toFixed(2);
+        let dimensionTxt = text + (cotaPaperScale / scale).toFixed(1);
         if (override != "") {
             dimensionTxt = text + override;
         }

@@ -243,7 +243,10 @@ botaoCalc.addEventListener('click', () => {
     let angulo = parseFloat(convertCommaInput(anguloIn.value));
     let compr = null;
     desenvolvimento(esp, dext, angulo);
-    if (checkInput(comprimentoIn.value) && comprimentoIn.value != '') {compr = parseFloat(convertCommaInput(comprimentoIn.value));}
+    if (checkInput(comprimentoIn.value) && comprimentoIn.value != '') {
+        compr = parseFloat(convertCommaInput(comprimentoIn.value));
+        if (compr == 0) {compr = null}
+    }
     draw(esp, dext, angulo, compr);
     renderedGlobal = true;
     return;

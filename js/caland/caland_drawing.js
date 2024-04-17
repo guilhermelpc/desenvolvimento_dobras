@@ -28,7 +28,7 @@ class arcOutLine {
         this.startXIn = this.cX + this.rIntPaperScale * Math.cos(angPonto);
         this.endXIn = this.cX - this.rIntPaperScale * Math.cos(angPonto);
 
-        this.distBetweenViews = 41.9;
+        this.distBetweenViews = 39;
         this.centerMarkActive = false;
         this.sideViewActive = false;
 
@@ -132,7 +132,7 @@ class arcOutLine {
         if (this.comprimento && this.comprimento != 0) {
             let comprPaperScale = Math.min(this.comprPaperScale, this.limComprPprScl);
             createDimLine({
-                x1: (this.cX + 73.5), y1: (this.cY + this.rExtPaperScale), x2: (this.cX + 73.5 + comprPaperScale), y2: (this.cY + this.rExtPaperScale)
+                x1: (this.cX + this.distBetweenViews + this.rExtPaperScale), y1: (this.cY + this.rExtPaperScale), x2: (this.cX + this.distBetweenViews + this.rExtPaperScale + comprPaperScale), y2: (this.cY + this.rExtPaperScale)
             }, -28, this.arcGroupElement, this.textHeight, this.scale, '',"h","grey","0.3", this.comprimento.toFixed(1)); // cota dExt
 
         }
@@ -166,7 +166,8 @@ class arcOutLine {
                 }, this.arcGroupElement);
             }
             // Break symbol:
-            const r = 0.1*(alturaPaperScale**1.5);//38.7;
+            let r = alturaPaperScale;
+            // r = alturaPaperScale / 8 >= r ? alturaPaperScale / 9 : r
             const breakSize =  this.limComprPprScl - breakDistLeft - breakDistRight;
             const arcCoords = [
                 `M ${sideStartX + breakDistLeft} ${sideBottomY} A ${r} ${r} 0 ${0} 1 ${sideStartX + breakDistLeft} ${sideBottomY-alturaPaperScale/2}`,
@@ -181,16 +182,25 @@ class arcOutLine {
                     }, this.arcGroupElement);
             }
 
-            // createSvgElement('path', {
-            // d: `M ${sideStartX + breakDistLeft} ${sideBottomY} A ${r} ${r} 0 ${0} 1 ${sideStartX + breakDistLeft} ${sideBottomY-alturaPaperScale/2}`,
-            //     stroke: "black", fill: "transparent", 'stroke-width': this.strokeWidth
-            // }, this.arcGroupElement);
-            // createSvgElement('path', {
-            //     d: `M ${sideStartX + breakDistLeft} ${sideBottomY-alturaPaperScale/2} A ${r} ${r} 0 ${0} 0 ${sideStartX + breakDistLeft} ${sideBottomY-alturaPaperScale}`,
-            //         stroke: "black", fill: "transparent", 'stroke-width': this.strokeWidth
-            //     }, this.arcGroupElement);
-            
-            
+            // invisible lines:
+            let dash = this.angulo < 180 ? "0" : "3"
+            let cBreakXBottom = sideStartX+breakDistLeft+r*Math.cos(Math.asin((alturaPaperScale/4)/r))
+            let cBreakXTop = sideStartX+breakDistLeft-r*Math.cos(Math.asin((alturaPaperScale/4)/r))
+            let espPaperScale = this.rExtPaperScale-this.rIntPaperScale;
+
+
+            const hiddenLinesCoord = [
+                [sideStartX, this.cY+this.rIntPaperScale, cBreakXBottom-r*Math.sin(Math.acos((-alturaPaperScale/4+espPaperScale)/r)), this.cY+this.rIntPaperScale, "3"], // linha inferior esq
+                [sideStartX, Math.max(this.startYIn, this.startY), cBreakXTop+r*Math.sin(Math.acos((-alturaPaperScale/4+espPaperScale)/r)), Math.max(this.startYIn, this.startY), dash], // linha superior esq 
+                [breakSize+cBreakXBottom-r*Math.sin(Math.acos((-alturaPaperScale/4+espPaperScale)/r)), this.cY+this.rIntPaperScale, sideStartX+this.limComprPprScl, this.cY+this.rIntPaperScale, "3"], // linha inferior dir
+                [breakSize+cBreakXTop+r*Math.sin(Math.acos((-alturaPaperScale/4+espPaperScale)/r)), Math.max(this.startYIn, this.startY), sideStartX+this.limComprPprScl, Math.max(this.startYIn, this.startY), dash], // linha superior dir
+            ];
+            for (const line of hiddenLinesCoord) {
+                createSvgElement("line", {
+                    x1: line[0], y1: line[1], x2: line[2], y2: line[3], 
+                    "stroke-width": this.strokeWidth,  stroke: "black", 'stroke-dasharray': line[4],
+                }, this.arcGroupElement);
+            }
 
             // if (this.angulo == 360) {
 
@@ -232,7 +242,7 @@ class arcOutLine {
 
 // Dev environment testing:
 if (window.location.port.includes('5500')) {
-    draw(6.3, 400, 270, 400);
+    draw(6.3, 400, 270, 4000);
 }
 
 function draw(esp, dext, angulo, comprimento) {

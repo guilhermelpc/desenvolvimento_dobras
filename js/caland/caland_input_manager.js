@@ -5,6 +5,7 @@ const comprimentoIn = document.getElementById('comprimento');
 const anguloIn = document.getElementById('angulo');
 const aberturaExtIn = document.getElementById('abertura_ext');
 const botaoInverter = document.getElementById('inverter');
+const checkBoxIn = document.getElementById('cbc_paper');
 const botaoCalc = document.getElementById('calcular');
 const botaoReset = document.getElementById('reset');
 var anchorsGlobal = ['', ''];
@@ -234,6 +235,12 @@ botaoInverter.addEventListener('click', () => {
     }
 });
 
+checkBoxIn.addEventListener('change', function() {
+    if (renderedGlobal) {
+        botaoCalc.click();
+    }
+});
+
 botaoCalc.addEventListener('click', () => {
     resetOutput();
     outWarn.innerHTML = 'Dados Inválidos';
@@ -242,11 +249,13 @@ botaoCalc.addEventListener('click', () => {
     let dext = parseFloat(convertCommaInput(diamExtIn.value));
     let angulo = parseFloat(convertCommaInput(anguloIn.value));
     let compr = null;
-    desenvolvimento(esp, dext, angulo);
+
     if (checkInput(comprimentoIn.value) && comprimentoIn.value != '') {
         compr = parseFloat(convertCommaInput(comprimentoIn.value));
         if (compr == 0) {compr = null}
     }
+
+    printDesenv(esp, dext, angulo);
     draw(esp, dext, angulo, compr);
     renderedGlobal = true;
     return;

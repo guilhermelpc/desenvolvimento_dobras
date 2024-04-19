@@ -115,6 +115,10 @@ input, select, button {
     font-size:0.8em;
 }
 
+#cbc_paper {
+    width: auto;
+}
+
 #calcular_div {
     margin-top: 30px;
     display: flex;

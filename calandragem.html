@@ -44,18 +44,24 @@
                         <div class="tip">(opcional)</div>
                     </div>
                 </div>
-                    <div class="inputs_gerais">
-                        <label for="angulo">Ângulo (graus):</label>
-                        <div class="input_container">
-                            <input type="text" name="angulo" id="angulo">
-                            <div class="tip"></div>
-                        </div>
-                        <label for="abertura_ext">Abertura ext. (mm):</label>
-                        <div class="input_container">
-                            <input type="text" name="abertura_ext" id="abertura_ext">
-                            <div class="tip"><button id="inverter">Inverter</button></div>
-                        </div>
+                <div class="inputs_gerais">
+                    <label for="angulo">Ângulo (graus):</label>
+                    <div class="input_container">
+                        <input type="text" name="angulo" id="angulo">
+                        <div class="tip"></div>
                     </div>
+                    <label for="abertura_ext">Abertura ext. (mm):</label>
+                    <div class="input_container">
+                        <input type="text" name="abertura_ext" id="abertura_ext">
+                        <div class="tip"><button id="inverter">Inverter</button></div>
+                    </div>
+                </div>
+                <div class="inputs_gerais">
+                    <div class="input_container">
+                        <input type="checkbox" id="cbc_paper" name="cbc_paper"> 
+                        <label for="cbc_paper">Folha CBC</label>
+                    </div>
+                </div>
                 <div id="calcular_div">
                     <button id="calcular">Calcular</button>
                     <button id="reset">Reset</button>
@@ -73,6 +79,7 @@
                 </div>
             </section>
         </section>
+        <script src="images/folha_cbc.js"></script>
         <script src="js/caland/caland_main.js"></script>
         <script src="js/caland/caland_input_manager.js"></script>
         <script src="js/caland/caland_drawing.js"></script>

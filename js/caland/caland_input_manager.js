@@ -256,7 +256,8 @@ botaoCalc.addEventListener('click', () => {
     }
 
     printDesenv(esp, dext, angulo);
-    draw(esp, dext, angulo, compr);
+    svgCont = new svgContent(esp, dext, angulo, compr);
+    svgCont.render();
     renderedGlobal = true;
     return;
 });
@@ -271,4 +272,13 @@ document.addEventListener('keydown', (event) => {
     if (event.key === 'Enter') {
         botaoCalc.click();
     }
+});
+
+drawingDiv.addEventListener("click", (event) => {
+    const svgRect = drawingDiv.getBoundingClientRect();
+    const x = event.offsetX / svgRect.width * 210;
+    const y = event.offsetY / svgRect.height * 297;
+    console.log(x, y);
+    
+    
 });

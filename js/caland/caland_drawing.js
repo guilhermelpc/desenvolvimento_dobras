@@ -361,13 +361,16 @@ class svgContent {
     }
 }
 
+let testFolha = false;
+
 // Dev environment testing:
-testFolha = false;
-if (window.location.port.includes('5500')) {
-    testFolha = true;
-    svgCont = new svgContent(6,500,350,350);
-    svgCont.render();
-}
+// {
+// if (window.location.port.includes('5500')) {
+//     testFolha = true;
+//     svgCont = new svgContent(6,500,350,350);
+//     svgCont.render();
+// }
+// // }
 
 function createDimLine(xyObj, distance, parentElement, textHeight, scale, text = "", align="aligned", color="grey", strokeWidth="0.3", override="") {
     let digitLen = textHeight / 1.8;
@@ -464,5 +467,3 @@ function svgToDataURL(svgContent) {
     const header = 'data:image/svg+xml;charset=utf-8,';
     return header + encoded;
 }
-
-

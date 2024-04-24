@@ -8,6 +8,7 @@ const botaoInverter = document.getElementById('inverter');
 const checkBoxIn = document.getElementById('cbc_paper');
 const botaoCalc = document.getElementById('calcular');
 const botaoReset = document.getElementById('reset');
+
 var anchorsGlobal = ['', ''];
 var invertedGlobal = false;
 
@@ -29,7 +30,7 @@ function checkInput(text_input) {
     return false;
 }
 
-function areAllInputsOk() {
+function areAllInputsReady() {
     if (!checkInput(espessuraIn.value)) {return false;}
     if (!checkInput(diamExtIn.value)) {return false;}
     if (!checkInput(diamIntIn.value)) {return false;}
@@ -212,7 +213,7 @@ anguloIn.addEventListener('input', () => {
     if (renderedGlobal === true) {
         botaoCalc.click();
     }
-    if (renderedGlobal === false && areAllInputsOk()) {
+    if (renderedGlobal === false && areAllInputsReady()) {
         outWarn.innerHTML = '';
     }
 });
@@ -222,7 +223,7 @@ aberturaExtIn.addEventListener('input', () => {
     if (renderedGlobal === true) {
         botaoCalc.click();
     }
-    if (renderedGlobal === false && areAllInputsOk()) {
+    if (renderedGlobal === false && areAllInputsReady()) {
         outWarn.innerHTML = '';
     }
 });
@@ -244,7 +245,7 @@ checkBoxIn.addEventListener('change', function() {
 botaoCalc.addEventListener('click', () => {
     resetOutput();
     outWarn.innerHTML = 'Dados Inválidos';
-    if (!areAllInputsOk()) {return;}
+    if (!areAllInputsReady()) {return;}
     let esp = parseFloat(convertCommaInput(espessuraIn.value));
     let dext = parseFloat(convertCommaInput(diamExtIn.value));
     let angulo = parseFloat(convertCommaInput(anguloIn.value));
@@ -279,6 +280,4 @@ drawingDiv.addEventListener("click", (event) => {
     const x = event.offsetX / svgRect.width * 210;
     const y = event.offsetY / svgRect.height * 297;
     console.log(x, y);
-    
-    
 });

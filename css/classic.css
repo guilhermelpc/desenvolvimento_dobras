@@ -34,11 +34,12 @@ nav ul {
     list-style-type: none;
     height: 2.2em;
     flex-wrap: wrap;
+    align-content: center;
 }
 
 nav ul li {
     margin-right: 1.2em;
-    margin-bottom: 0.1  em;
+    margin-bottom: 0.1em;
 
 }
 

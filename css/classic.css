@@ -2,7 +2,7 @@ html {
     margin: 0;
     padding: 0;
     border: 0;
-    background-color: #96adcc;
+    background-color: #6b6b6b;
     color: #ffffff;
     font-family:Courier, monospace;
     font-size: 1.1em;
@@ -16,6 +16,51 @@ body {
     margin: 0;
     padding: 0;
     border: 0;
+}
+
+nav {
+    display:flex;
+    width: 100%;
+    justify-content: center;
+    align-items: center;
+}
+
+nav ul {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    display: flex;
+    align-items: center;
+    list-style-type: none;
+    height: 2.2em;
+    flex-wrap: wrap;
+    align-content: center;
+}
+
+nav ul li {
+    margin-right: 1.2em;
+    margin-bottom: 0.1em;
+
+}
+
+nav a {
+    display: flex;
+    align-items: center;
+    padding: 0;
+    margin: 0;
+    text-decoration: none;
+    color: #363636;
+    background-color: #dedede;
+    height: 75%;
+    padding-left: 0.6em;
+    padding-right: 0.6em;
+    border-radius: 0.2em;
+    border-style:double;
+    border-color: #e9e9e9;
+}
+
+nav a:visited {
+    color: #363636;
 }
 
 .title {
@@ -37,7 +82,7 @@ section>section {
     background-color: #d6d6d6;
     border-width: 8px;
     border-color: white;
-    box-shadow: 8px 8px 3px #0000008b;
+    box-shadow: 3px 3px 11px #0000008b;
     border-radius: 0.5em;
     height:fit-content;
 }
@@ -115,6 +160,10 @@ input, select, button {
     font-size:0.8em;
 }
 
+#cbc_paper {
+    width: auto;
+}
+
 #calcular_div {
     margin-top: 30px;
     display: flex;
@@ -136,41 +185,11 @@ input, select, button {
     font-size: 0.9em;
 }
 
-nav ul {
-    margin: 0;
-    padding: 0;
-    border: 0;
-    display: flex;
-    align-items: center;
-    list-style-type: none;
-    height: 2.2em;
-}
-
-nav a {
-    display: flex;
-    align-items: center;
-    padding: 0;
-    margin: 0;
-    text-decoration: none;
-    color: #363636;
-    background-color: #dedede;
-    height: 75%;
-    padding-left: 1em;
-    padding-right: 1em;
-    border-radius: 0.2em;
-    border-style:double;
-    border-color: #e9e9e9;
-}
-
 li {
     display: flex;
     height: 80%;
     align-items: center;
     margin-left: 0.3em;
-}
-
-nav a:visited {
-    color: #363636;
 }
 
 .current_page {

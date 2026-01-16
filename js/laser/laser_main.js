@@ -70,17 +70,16 @@ function calculateOutput(perimeter, speed, timePrice, gasType, pierceCount, pier
     const totalPierceTimeMinutes = (pierceCount * pierceTime) / 60;
     const totalTimeMinutes = cuttingTimeMinutes + totalPierceTimeMinutes;
 
-    cuttingTimeOutput.innerHTML = `Total time: ${totalTimeMinutes.toFixed(2)} minutes`;
-    cuttingSpeedOutput.innerHTML = `Cutting speed utilized: ${speed.toFixed(2)} mm/min (${gasType})`;
+    cuttingTimeOutput.innerHTML = `Tempo tot.: ${totalTimeMinutes.toFixed(2)} min`;
+    cuttingSpeedOutput.innerHTML = `Vel. corte: ${speed.toFixed(2)} mm/min (${gasType})`;
     
     if (isNaN(timePrice) || timePrice < 0) {
-        messageContainer.innerHTML = 'Price per time is invalid. Price calculation skipped.';
-        priceOutput.innerHTML = `Estimated price: --`;
+        messageContainer.innerHTML = 'Preço por hora inválido. Cálculo de preço ignorado.';
+        priceOutput.innerHTML = `Preço estimado: --`;
     } else {
         const estimatedPrice = totalTimeMinutes * timePrice / 60;
-        priceOutput.innerHTML = `Estimated price: $${estimatedPrice.toFixed(2)}`;
+        priceOutput.innerHTML = `Preço estimado: $${estimatedPrice.toFixed(2)}`;
     }
-    console.log('Calculation complete.');
     return;
 }
 // Teste:
@@ -97,16 +96,16 @@ calculateBtn.addEventListener('click', () => {
     const pricePerTime = parseFloat(pricePerTimeInput.value);
 
     // --- Input Validation ---
+    if (isNaN(thickness) || thickness <= 0) {
+        messageContainer.innerHTML = 'Insira um número válido para a Espessura do Material.';
+        return;
+    }
     if (isNaN(perimeter) || perimeter <= 0) {
-        messageContainer.innerHTML = 'Please enter a valid positive number for Total Cut Perimeter.';
+        messageContainer.innerHTML = 'Insira um número válido para o Perímetro Total de Corte.';
         return;
     }
     if (isNaN(pierceCount) || pierceCount < 0) {
-        messageContainer.innerHTML = 'Please enter a valid non-negative number for Number of Pierces.';
-        return;
-    }
-    if (isNaN(thickness) || thickness <= 0) {
-        messageContainer.innerHTML = 'Please enter a valid positive number for Material Thickness.';
+        messageContainer.innerHTML = 'Insira um número válido para o Número de Perfurações.';
         return;
     }
 
@@ -117,37 +116,53 @@ calculateBtn.addEventListener('click', () => {
 
     if (!isNaN(userCuttingSpeed) && userCuttingSpeed > 0) {
         finalCuttingSpeed = userCuttingSpeed;
-        messageContainer.innerHTML = 'Manual speed entered. Piercing time is not included in calculation.';
+        // messageContainer.innerHTML = 'Velocidade manual inserida.';
     } else {
         finalCuttingSpeed = getSpeedFromDataSet(thickness, dataSetToUse);
+    }
+
+    finalPierceTime = getPierceTimeFromDataSet(thickness, dataSetToUse);
+
+    if (!finalCuttingSpeed && selectedGasType === 'Air') {
+        dataSetToUse = cuttingSpeedDataO2;
+        finalCuttingSpeed = getSpeedFromDataSet(thickness, dataSetToUse);
         finalPierceTime = getPierceTimeFromDataSet(thickness, dataSetToUse);
-
-        if (!finalCuttingSpeed && selectedGasType === 'Air') {
-            dataSetToUse = cuttingSpeedDataO2;
-            finalCuttingSpeed = getSpeedFromDataSet(thickness, dataSetToUse);
-            finalPierceTime = getPierceTimeFromDataSet(thickness, dataSetToUse);
-            if (finalCuttingSpeed) {
-                utilizedGasType = 'O2';
-                messageContainer.innerHTML = `No Air cutting data for ${thickness}mm. Using O2 data as a fallback.`;
-            }
-        }
-
-        if (!finalCuttingSpeed) {
-            messageContainer.innerHTML = `No cutting data found for ${thickness}mm with ${selectedGasType}. Please provide a manual cutting speed.`;
-            return;
-        }
-        
-        const sortedThicknesses = Object.keys(dataSetToUse).map(Number).sort((a, b) => a - b);
-        const closestThicknessMatch = sortedThicknesses.find(t => t >= thickness);
-
-        // Show message only if the exact thickness was not found
-        if (closestThicknessMatch !== undefined && thickness !== closestThicknessMatch) {
-                messageContainer.innerHTML = `Exact data for ${thickness}mm not found. Using data for ${closestThicknessMatch}mm as an estimate.`;
+        if (finalCuttingSpeed) {
+            utilizedGasType = 'O2';
+            messageContainer.innerHTML = `- Sem dados para corte a ar em espessura ${thickness} mm. Considerando O2.<br>`;
         }
     }
 
+    if (!finalPierceTime && selectedGasType === 'Air') {
+        dataSetToUse = cuttingSpeedDataO2;
+        finalPierceTime = getPierceTimeFromDataSet(thickness, dataSetToUse);
+        if (finalPierceTime) {
+            utilizedGasType = 'O2';
+            messageContainer.innerHTML = ` - Sem dados para perfuração a ar em espessura ${thickness} mm. Considerando O2.<br>`;
+        }
+    }
+
+    if (!finalPierceTime) {
+        messageContainer.innerHTML = `Sem dados de perfuração para ${thickness} mm com ${selectedGasType}.`;
+        return;
+    }
+
+    if (!finalCuttingSpeed) {
+        messageContainer.innerHTML = `Sem dados de corte para ${thickness}mm com ${selectedGasType}.`;
+        return;
+    }
+    
+    const sortedThicknesses = Object.keys(dataSetToUse).map(Number).sort((a, b) => a - b);
+    const closestThicknessMatch = sortedThicknesses.find(t => t >= thickness);
+
+    // Show message only if the exact thickness was not found
+    if (closestThicknessMatch !== undefined && thickness !== closestThicknessMatch) {
+            messageContainer.innerHTML = messageContainer.innerHTML + `- Sem dados exatos para ${thickness} mm. Utilizando ${closestThicknessMatch} mm como estimativa.<br>`;
+    }
+    // }
+
     if (!finalCuttingSpeed || finalCuttingSpeed <= 0) {
-        messageContainer.innerHTML = 'Could not determine a valid cutting speed. Please check your inputs.';
+        messageContainer.innerHTML = 'Não foi possível determinar vel. corte válida. Verifique dados inseridos.';
         return;
     }
 

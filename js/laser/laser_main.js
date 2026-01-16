@@ -80,7 +80,6 @@ function calculateOutput(perimeter, speed, timePrice, gasType, pierceCount, pier
         const estimatedPrice = totalTimeMinutes * timePrice / 60;
         priceOutput.innerHTML = `Preço estimado: $${estimatedPrice.toFixed(2)}`;
     }
-    console.log('Calculation complete.');
     return;
 }
 // Teste:
@@ -97,16 +96,16 @@ calculateBtn.addEventListener('click', () => {
     const pricePerTime = parseFloat(pricePerTimeInput.value);
 
     // --- Input Validation ---
+    if (isNaN(thickness) || thickness <= 0) {
+        messageContainer.innerHTML = 'Insira um número válido para a Espessura do Material.';
+        return;
+    }
     if (isNaN(perimeter) || perimeter <= 0) {
-        messageContainer.innerHTML = 'Insira um número positivo válido para o Perímetro Total de Corte.';
+        messageContainer.innerHTML = 'Insira um número válido para o Perímetro Total de Corte.';
         return;
     }
     if (isNaN(pierceCount) || pierceCount < 0) {
-        messageContainer.innerHTML = 'Insira um número não negativo válido para o Número de Perfurações.';
-        return;
-    }
-    if (isNaN(thickness) || thickness <= 0) {
-        messageContainer.innerHTML = 'Insira um número positivo válido para a Espessura do Material.';
+        messageContainer.innerHTML = 'Insira um número válido para o Número de Perfurações.';
         return;
     }
 
@@ -117,34 +116,50 @@ calculateBtn.addEventListener('click', () => {
 
     if (!isNaN(userCuttingSpeed) && userCuttingSpeed > 0) {
         finalCuttingSpeed = userCuttingSpeed;
-        messageContainer.innerHTML = 'Velocidade manual inserida. Tempo de perfuração não incluído no cálculo.';
+        // messageContainer.innerHTML = 'Velocidade manual inserida.';
     } else {
         finalCuttingSpeed = getSpeedFromDataSet(thickness, dataSetToUse);
+    }
+
+    finalPierceTime = getPierceTimeFromDataSet(thickness, dataSetToUse);
+
+    if (!finalCuttingSpeed && selectedGasType === 'Air') {
+        dataSetToUse = cuttingSpeedDataO2;
+        finalCuttingSpeed = getSpeedFromDataSet(thickness, dataSetToUse);
         finalPierceTime = getPierceTimeFromDataSet(thickness, dataSetToUse);
-
-        if (!finalCuttingSpeed && selectedGasType === 'Air') {
-            dataSetToUse = cuttingSpeedDataO2;
-            finalCuttingSpeed = getSpeedFromDataSet(thickness, dataSetToUse);
-            finalPierceTime = getPierceTimeFromDataSet(thickness, dataSetToUse);
-            if (finalCuttingSpeed) {
-                utilizedGasType = 'O2';
-                messageContainer.innerHTML = `Sem dados para corte a ar em espessura ${thickness}mm. Considerando O2.`;
-            }
-        }
-
-        if (!finalCuttingSpeed) {
-            messageContainer.innerHTML = ` Sem dados de corte para ${thickness}mm com ${selectedGasType}. Insira velocidade manualmente.`;
-            return;
-        }
-        
-        const sortedThicknesses = Object.keys(dataSetToUse).map(Number).sort((a, b) => a - b);
-        const closestThicknessMatch = sortedThicknesses.find(t => t >= thickness);
-
-        // Show message only if the exact thickness was not found
-        if (closestThicknessMatch !== undefined && thickness !== closestThicknessMatch) {
-                messageContainer.innerHTML = `Sem dados exatos para ${thickness}mm. Utilizando ${closestThicknessMatch}mm como estimativa.`;
+        if (finalCuttingSpeed) {
+            utilizedGasType = 'O2';
+            messageContainer.innerHTML = `- Sem dados para corte a ar em espessura ${thickness} mm. Considerando O2.<br>`;
         }
     }
+
+    if (!finalPierceTime && selectedGasType === 'Air') {
+        dataSetToUse = cuttingSpeedDataO2;
+        finalPierceTime = getPierceTimeFromDataSet(thickness, dataSetToUse);
+        if (finalPierceTime) {
+            utilizedGasType = 'O2';
+            messageContainer.innerHTML = ` - Sem dados para perfuração a ar em espessura ${thickness} mm. Considerando O2.<br>`;
+        }
+    }
+
+    if (!finalPierceTime) {
+        messageContainer.innerHTML = `Sem dados de perfuração para ${thickness} mm com ${selectedGasType}.`;
+        return;
+    }
+
+    if (!finalCuttingSpeed) {
+        messageContainer.innerHTML = `Sem dados de corte para ${thickness}mm com ${selectedGasType}.`;
+        return;
+    }
+    
+    const sortedThicknesses = Object.keys(dataSetToUse).map(Number).sort((a, b) => a - b);
+    const closestThicknessMatch = sortedThicknesses.find(t => t >= thickness);
+
+    // Show message only if the exact thickness was not found
+    if (closestThicknessMatch !== undefined && thickness !== closestThicknessMatch) {
+            messageContainer.innerHTML = messageContainer.innerHTML + `- Sem dados exatos para ${thickness} mm. Utilizando ${closestThicknessMatch} mm como estimativa.<br>`;
+    }
+    // }
 
     if (!finalCuttingSpeed || finalCuttingSpeed <= 0) {
         messageContainer.innerHTML = 'Não foi possível determinar vel. corte válida. Verifique dados inseridos.';

@@ -208,6 +208,12 @@ li {
     color: rgb(172, 58, 38);
 }
 
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
 /* @media screen and (min-width: 600px) {
     section>div, h4 {
         justify-content: space-between;

@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Orçamento de Corte a Laser</title>
+        <link rel="stylesheet" href="css/classic.css">
+        <link rel="icon" type="image/x-icon" href="images/favicon.ico">
+    </head>
+    <body>
+        <nav>
+            <img src="images/test_logo.svg" alt="Logo">
+            <ul>
+                <li><a href="index.html">Dobra</a></li>
+                <li><a href="calandragem.html">Calandragem</a></li>
+                <li><a href="laser.html" class="current_page">Laser</a></li>
+            </ul>
+        </nav>
+        <header class="title">
+            <h2>Orçamento de Corte a Laser</h2>
+        </header>
+        <section id="main_content">
+            <section id="inputs">
+                <h4>Dados iniciais</h4>
+                <div class="inputs_gerais">
+                    <label for="espessura">Espessura (mm):</label>
+                    <div class="input_container">
+                        <input type="number" name="espessura" id="espessura" placeholder="mm">
+                        <div class="tip"></div>
+                    </div>
+                    <label for="perimetro">Perímetro (mm):</label>
+                    <div class="input_container">
+                        <input type="number" name="perimetro" id="perimetro">
+                        <div class="tip"></div>
+                    </div>
+                    <label for="qtd_pierces">Qtd. de pierces:</label>
+                    <div class="input_container">
+                        <input type="number" name="qtd_pierces" id="qtd_pierces">
+                        <div class="tip"></div>
+                    </div>
+                    <label for="tipo_gas">Tipo de Gás:</label>
+                    <div class="input_container">
+                        <select id="tipo_gas">
+                            <option value="O2">Oxigênio</option>
+                            <option value="Air">Ar</option>
+                        </select>
+                    </div>
+                    <label for="preco_tempo">Preço hora (R$/h):</label>
+                    <div class="input_container">
+                        <input type="number" name="preco_tempo" id="preco_tempo">
+                        <div class="tip"></div>
+                    </div>
+                </div>
+                <div class="inputs_gerais">
+                    <label for="vel_corte">Vel. corte (mm/min):</label>
+                    <div class="input_container">
+                        <input type="number" name="vel_corte" id="vel_corte">
+                        <div class="tip">(opcional)</div>
+                    </div>
+                </div>
+                <div id="calcular_div">
+                    <button id="calcular">Calcular</button>
+                    <button id="reset">Reset</button>
+                </div>
+            </section>
+            <section id="outputs">
+                <h4>Resultados</h4>
+                <div class="warn" id="output_warn">
+                </div>
+                <div id="output_div">
+                    <div id="cuttingTimeOutput" class="result"></div>
+                    <div id="priceOutput" class="result"></div>
+                    <div id="cuttingSpeedOutput" class="result"></div>
+                </div>
+            </section>
+        </section>
+        <script src="js/laser/laser_main.js"></script>
+    </body>
+</html>

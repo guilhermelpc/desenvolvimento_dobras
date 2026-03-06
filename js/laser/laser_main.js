@@ -4,7 +4,9 @@ const perimeterInput = document.getElementById('perimetro');
 const pierceCountInput = document.getElementById('qtd_pierces');
 const gasTypeSelect = document.getElementById('tipo_gas');
 const pricePerTimeInput = document.getElementById('preco_tempo');
+const deslocamentoInput = document.getElementById('desloc_livre');
 const cuttingSpeedInput = document.getElementById('vel_corte');
+const pierceTimeInput = document.getElementById('tempo_furo');
 const calculateBtn = document.getElementById('calcular');
 const resetBtn = document.getElementById('reset');
 
@@ -13,6 +15,7 @@ const messageContainer = document.getElementById('output_warn');
 const cuttingTimeOutput = document.getElementById('cuttingTimeOutput');
 const priceOutput = document.getElementById('priceOutput');
 const cuttingSpeedOutput = document.getElementById('cuttingSpeedOutput');
+const pierceTimeOutput = document.getElementById('pierceTimeOutput');
 
 // PARAMETERS
 const cuttingSpeedDataO2 = {
@@ -20,8 +23,8 @@ const cuttingSpeedDataO2 = {
     1:    { speed: 3400, pierce: 0.6 }, 1.5:  { speed: 3400, pierce: 0.6 },
     2:    { speed: 3400, pierce: 0.6 }, 3:    { speed: 3300, pierce: 0.6 },
     4.75: { speed: 3200, pierce: 0.6 }, 6.3:  { speed: 2400, pierce: 0.6 },
-    6.35: { speed: 2400, pierce: 0.6 }, 8:    { speed: 2300, pierce: 0.8 },
-    9.5:  { speed: 2000, pierce: 1 }, 12.5: { speed: 1500, pierce: 2 },
+    6.35: { speed: 2400, pierce: 0.8 }, 8:    { speed: 2300, pierce: 4 },
+    9.5:  { speed: 2000, pierce: 1.5 }, 12.5: { speed: 1500, pierce: 2 },
     12.7: { speed: 1500, pierce: 3 }, 16:   { speed: 1000, pierce: 5 },
     19:   { speed: 580,  pierce: 12 }, 22:   { speed: 450,  pierce: 12 },
     22.2: { speed: 480,  pierce: 15 }, 22.4: { speed: 480,  pierce: 15 },
@@ -29,15 +32,22 @@ const cuttingSpeedDataO2 = {
 };
 const cuttingSpeedDataAir = {
     1:    { speed: 17000, pierce: 0.3 }, 1.5:  { speed: 17000, pierce: 0.3 },
-    2:    { speed: 17000, pierce: 0.3 }, 3:    { speed: 17000, pierce: 0.3 },
+    2:    { speed: 17000, pierce: 0.3 }, 3:    { speed: 17000, pierce: 0.4 },
     4.75: { speed: 11000, pierce: 0.5 },
 };
+const cuttingSpeedDataN2 = {
+    1:    { speed: 17000, pierce: 0.3 }, 1.5:  { speed: 17000, pierce: 0.3 },
+    2:    { speed: 17000, pierce: 0.3 }, 3:    { speed: 17000, pierce: 0.4 },
+    4.75: { speed: 11000, pierce: 0.5 },
+};
+const defaultDisplacementSpeed = 20000; // mm/min for free movement (without cutting)
 
 function resetOutput() {
     messageContainer.innerHTML = '';
     cuttingTimeOutput.innerHTML = '';
     priceOutput.innerHTML = '';
     cuttingSpeedOutput.innerHTML = '';
+    pierceTimeOutput.innerHTML = '';
     return;
 }
 
@@ -66,12 +76,11 @@ function getPierceTimeFromDataSet(thickness, dataSet) {
 
 // --- Main Calculation Function ---
 function calculateOutput(perimeter, speed, timePrice, gasType, pierceCount, pierceTime) {
-    const cuttingTimeMinutes = perimeter / speed;
-    const totalPierceTimeMinutes = (pierceCount * pierceTime) / 60;
-    const totalTimeMinutes = cuttingTimeMinutes + totalPierceTimeMinutes;
+    const totalTimeMinutes = perimeter / speed + (pierceCount * pierceTime) / 60 + (deslocamentoInput.value ? (parseFloat(deslocamentoInput.value) / defaultDisplacementSpeed) : 0);
 
     cuttingTimeOutput.innerHTML = `Tempo tot.: ${totalTimeMinutes.toFixed(2)} min`;
     cuttingSpeedOutput.innerHTML = `Vel. corte: ${speed.toFixed(2)} mm/min (${gasType})`;
+    pierceTimeOutput.innerHTML = `Tempo por furo: ${(pierceTime).toFixed(2)} sec`;
     
     if (isNaN(timePrice) || timePrice < 0) {
         messageContainer.innerHTML = 'Preço por hora inválido. Cálculo de preço ignorado.';
@@ -82,8 +91,6 @@ function calculateOutput(perimeter, speed, timePrice, gasType, pierceCount, pier
     }
     return;
 }
-// Teste:
-// calculateOutput(perimeter = 100, speed = 3400, timePrice = 500, gasType = 'O2', pierceCount = 5, pierceTime = 0.6);
 
 calculateBtn.addEventListener('click', () => {
     resetOutput();
@@ -93,6 +100,7 @@ calculateBtn.addEventListener('click', () => {
     const thickness = parseFloat(thicknessInput.value);
     const selectedGasType = gasTypeSelect.value;
     const userCuttingSpeed = parseFloat(cuttingSpeedInput.value);
+    const userPierceTime = parseFloat(pierceTimeInput.value);
     const pricePerTime = parseFloat(pricePerTimeInput.value);
 
     // --- Input Validation ---
@@ -112,7 +120,17 @@ calculateBtn.addEventListener('click', () => {
     let finalCuttingSpeed;
     let finalPierceTime = 0;
     let utilizedGasType = selectedGasType;
-    let dataSetToUse = (selectedGasType === 'O2') ? cuttingSpeedDataO2 : cuttingSpeedDataAir;
+    // let dataSetToUse = (selectedGasType === 'O2') ? cuttingSpeedDataO2 : cuttingSpeedDataAir;
+    if (selectedGasType === 'O2') {
+        dataSetToUse = cuttingSpeedDataO2;
+    } else if (selectedGasType === 'Air') {
+        dataSetToUse = cuttingSpeedDataAir;
+    } else if (selectedGasType === 'N2') {
+        dataSetToUse = cuttingSpeedDataN2;
+    } else {
+        messageContainer.innerHTML = 'Tipo de gás inválido.';
+        return;
+    }
 
     if (!isNaN(userCuttingSpeed) && userCuttingSpeed > 0) {
         finalCuttingSpeed = userCuttingSpeed;
@@ -121,7 +139,12 @@ calculateBtn.addEventListener('click', () => {
         finalCuttingSpeed = getSpeedFromDataSet(thickness, dataSetToUse);
     }
 
-    finalPierceTime = getPierceTimeFromDataSet(thickness, dataSetToUse);
+    if (!isNaN(userPierceTime) && userPierceTime > 0) {
+        finalPierceTime = userPierceTime;
+        // messageContainer.innerHTML = 'Tempo de furo manual inserido.';
+    } else {
+        finalPierceTime = getPierceTimeFromDataSet(thickness, dataSetToUse);
+    }
 
     if (!finalCuttingSpeed && selectedGasType === 'Air') {
         dataSetToUse = cuttingSpeedDataO2;
@@ -143,12 +166,12 @@ calculateBtn.addEventListener('click', () => {
     }
 
     if (!finalPierceTime) {
-        messageContainer.innerHTML = `Sem dados de perfuração para ${thickness} mm com ${selectedGasType}.`;
+        messageContainer.innerHTML = `Sem dados para ${thickness} mm com ${selectedGasType}.`;
         return;
     }
 
     if (!finalCuttingSpeed) {
-        messageContainer.innerHTML = `Sem dados de corte para ${thickness}mm com ${selectedGasType}.`;
+        messageContainer.innerHTML = `Sem dados para ${thickness}mm com ${selectedGasType}.`;
         return;
     }
     
@@ -174,6 +197,7 @@ resetBtn.addEventListener('click', () => {
     pierceCountInput.value = '';
     thicknessInput.value = '';
     gasTypeSelect.value = 'O2';
+    deslocamentoInput.value = '';
     cuttingSpeedInput.value = '';
     pricePerTimeInput.value = '';
     resetOutput();
@@ -186,7 +210,7 @@ document.addEventListener('keydown', (event) => {
     }
 });
 
-const inputFields = [perimeterInput, pierceCountInput, thicknessInput, gasTypeSelect, cuttingSpeedInput, pricePerTimeInput];
+const inputFields = [perimeterInput, pierceCountInput, thicknessInput, gasTypeSelect, cuttingSpeedInput, pricePerTimeInput, pierceTimeInput];
 inputFields.forEach(input => {
     input.addEventListener('input', resetOutput);
 });

@@ -43,6 +43,7 @@
                         <select id="tipo_gas">
                             <option value="O2">Oxigênio</option>
                             <option value="Air">Ar</option>
+                            <option value="N2">Nitrogênio</option>
                         </select>
                     </div>
                     <label for="preco_tempo">Preço hora (R$/h):</label>
@@ -52,9 +53,19 @@
                     </div>
                 </div>
                 <div class="inputs_gerais">
+                    <label for="desloc_livre">Desloc. Livre (mm):</label>
+                    <div class="input_container">
+                        <input type="number" name="desloc_livre" id="desloc_livre" placeholder="mm">
+                        <div class="tip">(opcional)</div>
+                    </div>
                     <label for="vel_corte">Vel. corte (mm/min):</label>
                     <div class="input_container">
                         <input type="number" name="vel_corte" id="vel_corte" placeholder="mm/min">
+                        <div class="tip">(opcional)</div>
+                    </div>
+                    <label for="tempo_furo">Tempo por furo (s):</label>
+                    <div class="input_container">
+                        <input type="number" name="tempo_furo" id="tempo_furo" placeholder="segundos">
                         <div class="tip">(opcional)</div>
                     </div>
                 </div>
@@ -71,6 +82,7 @@
                     <div id="cuttingTimeOutput" class="result"></div>
                     <div id="priceOutput" class="result"></div>
                     <div id="cuttingSpeedOutput" class="result"></div>
+                    <div id="pierceTimeOutput" class="result"></div>
                 </div>
             </section>
         </section>

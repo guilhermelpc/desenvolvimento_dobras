@@ -7,6 +7,7 @@ const pricePerTimeInput = document.getElementById('preco_tempo');
 const deslocamentoInput = document.getElementById('desloc_livre');
 const cuttingSpeedInput = document.getElementById('vel_corte');
 const pierceTimeInput = document.getElementById('tempo_furo');
+const custoGasInput = document.getElementById('custo_gas');
 const calculateBtn = document.getElementById('calcular');
 const resetBtn = document.getElementById('reset');
 
@@ -33,13 +34,14 @@ const cuttingSpeedDataO2 = {
 const cuttingSpeedDataAir = {
     1:    { speed: 17000, pierce: 0.3 }, 1.5:  { speed: 17000, pierce: 0.3 },
     2:    { speed: 17000, pierce: 0.3 }, 3:    { speed: 17000, pierce: 0.4 },
-    4.75: { speed: 11000, pierce: 0.5 },
+    4.75: { speed: 7000, pierce: 0.5 }, 6.3:  { speed: 3600, pierce: 0.5 },
 };
 const cuttingSpeedDataN2 = {
     1:    { speed: 17000, pierce: 0.3 }, 1.5:  { speed: 17000, pierce: 0.3 },
-    2:    { speed: 17000, pierce: 0.3 }, 3:    { speed: 17000, pierce: 0.4 },
-    4.75: { speed: 11000, pierce: 0.5 },
+    2:    { speed: 17000, pierce: 0.3 }, 3:    { speed: 13000, pierce: 0.4 },
+    4.75: { speed: 7000, pierce: 0.5 }, 6.3:  { speed: 3600, pierce: 0.5 },
 };
+
 const defaultDisplacementSpeed = 20000; // mm/min for free movement (without cutting)
 
 function resetOutput() {
@@ -101,6 +103,7 @@ calculateBtn.addEventListener('click', () => {
     const selectedGasType = gasTypeSelect.value;
     const userCuttingSpeed = parseFloat(cuttingSpeedInput.value);
     const userPierceTime = parseFloat(pierceTimeInput.value);
+    const custoGas = parseFloat(custoGasInput.value);
     const pricePerTime = parseFloat(pricePerTimeInput.value);
 
     // --- Input Validation ---
@@ -145,6 +148,11 @@ calculateBtn.addEventListener('click', () => {
     } else {
         finalPierceTime = getPierceTimeFromDataSet(thickness, dataSetToUse);
     }
+
+    if (!isNaN(custoGas) && custoGas > 0) {
+        // Assuming a certain gas consumption rate (e.g., 0.1 m³/min for cutting, 0.05 m³/min for piercing)
+        const gasConsumptionCutting = 0.1; // m³/min
+    } else
 
     if (!finalCuttingSpeed && selectedGasType === 'Air') {
         dataSetToUse = cuttingSpeedDataO2;
@@ -200,6 +208,7 @@ resetBtn.addEventListener('click', () => {
     deslocamentoInput.value = '';
     cuttingSpeedInput.value = '';
     pricePerTimeInput.value = '';
+    pierceTimeInput.value = '';
     resetOutput();
 });
 

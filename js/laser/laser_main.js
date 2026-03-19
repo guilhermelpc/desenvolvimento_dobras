@@ -77,18 +77,22 @@ function getPierceTimeFromDataSet(thickness, dataSet) {
 }
 
 // --- Main Calculation Function ---
-function calculateOutput(perimeter, speed, timePrice, gasType, pierceCount, pierceTime) {
+function calculateOutput(perimeter, speed, hourPrice, gasType, pierceCount, pierceTime, custoGas) {
     const totalTimeMinutes = perimeter / speed + (pierceCount * pierceTime) / 60 + (deslocamentoInput.value ? (parseFloat(deslocamentoInput.value) / defaultDisplacementSpeed) : 0);
 
     cuttingTimeOutput.innerHTML = `Tempo tot.: ${totalTimeMinutes.toFixed(2)} min`;
     cuttingSpeedOutput.innerHTML = `Vel. corte: ${speed.toFixed(2)} mm/min (${gasType})`;
     pierceTimeOutput.innerHTML = `Tempo por furo: ${(pierceTime).toFixed(2)} sec`;
-    
-    if (isNaN(timePrice) || timePrice < 0) {
+    let gasCostMinute = 0;
+    if (!isNaN(custoGas) && custoGas > 0) {
+        const vazaoGas = 1; // m³/min, this is a placeholder. In a real application, this should be calculated based on cutting parameters and gas type.
+        gasCostMinute = (vazaoGas * totalTimeMinutes) * custoGas; // Total gas cost = consumption rate * time * cost per unit
+    }
+    if (isNaN(hourPrice) || hourPrice < 0) {
         messageContainer.innerHTML = 'Preço por hora inválido. Cálculo de preço ignorado.';
         priceOutput.innerHTML = `Preço estimado: --`;
     } else {
-        const estimatedPrice = totalTimeMinutes * timePrice / 60;
+        const estimatedPrice = (totalTimeMinutes + gasCostMinute) * hourPrice / 60;
         priceOutput.innerHTML = `Preço estimado: $${estimatedPrice.toFixed(2)}`;
     }
     return;
@@ -197,7 +201,7 @@ calculateBtn.addEventListener('click', () => {
         return;
     }
 
-    calculateOutput(perimeter, finalCuttingSpeed, pricePerTime, utilizedGasType, pierceCount, finalPierceTime);
+    calculateOutput(perimeter, finalCuttingSpeed, pricePerTime, utilizedGasType, pierceCount, finalPierceTime, custoGas);
 });
 
 resetBtn.addEventListener('click', () => {
@@ -209,6 +213,7 @@ resetBtn.addEventListener('click', () => {
     cuttingSpeedInput.value = '';
     pricePerTimeInput.value = '';
     pierceTimeInput.value = '';
+    custoGasInput.value = '';
     resetOutput();
 });
 
@@ -219,7 +224,7 @@ document.addEventListener('keydown', (event) => {
     }
 });
 
-const inputFields = [perimeterInput, pierceCountInput, thicknessInput, gasTypeSelect, cuttingSpeedInput, pricePerTimeInput, pierceTimeInput];
+const inputFields = [perimeterInput, pierceCountInput, thicknessInput, gasTypeSelect, cuttingSpeedInput, pricePerTimeInput, pierceTimeInput, custoGasInput, deslocamentoInput];
 inputFields.forEach(input => {
     input.addEventListener('input', resetOutput);
 });

@@ -81,6 +81,10 @@ function calculateOutput(perimeter, speed, hourPrice, gasType, pierceCount, pier
     const totalTimeMinutes = perimeter / speed + (pierceCount * pierceTime) / 60 + (deslocamentoInput.value ? (parseFloat(deslocamentoInput.value) / defaultDisplacementSpeed) : 0);
 
     cuttingTimeOutput.innerHTML = `Tempo tot.: ${totalTimeMinutes.toFixed(2)} min`;
+    if (totalTimeMinutes < 1) {
+        cuttingTimeOutput.innerHTML = `Tempo tot.: ${totalTimeMinutes.toFixed(2)} min (${(totalTimeMinutes * 60).toFixed(2)} s)`;
+    }
+
     cuttingSpeedOutput.innerHTML = `Vel. corte: ${speed.toFixed(2)} mm/min (${gasType})`;
     pierceTimeOutput.innerHTML = `Tempo por furo: ${(pierceTime).toFixed(2)} sec`;
     let gasCostMinute = 0;

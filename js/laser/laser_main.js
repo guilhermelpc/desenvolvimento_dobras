@@ -89,7 +89,7 @@ function calculateOutput(perimeter, speed, hourPrice, gasType, pierceCount, pier
     pierceTimeOutput.innerHTML = `Tempo por furo: ${(pierceTime).toFixed(2)} sec`;
     let gasCostMinute = 0;
     if (!isNaN(custoGas) && custoGas > 0) {
-        const vazaoGas = 1; // m³/min, this is a placeholder. In a real application, this should be calculated based on cutting parameters and gas type.
+        const vazaoGas = 1/8; // m³/min, this is a placeholder. In a real application, this should be calculated based on cutting parameters and gas type.
         gasCostMinute = (vazaoGas * totalTimeMinutes) * custoGas; // Total gas cost = consumption rate * time * cost per unit
     }
     if (isNaN(hourPrice) || hourPrice < 0) {
